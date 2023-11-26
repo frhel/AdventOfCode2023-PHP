@@ -1,0 +1,42 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/ubuntu
+{
+	"name": "PHP on Debian",
+	"build": {"dockerfile": "Dockerfile"},
+	"features": {
+		"ghcr.io/devcontainers/features/github-cli:1": {
+			"installDirectlyFromGitHubRelease": true,
+			"version": "latest"
+		}
+	},
+
+	// Mount the host computer's .ssh folder into the container to inherit your SSH keys
+	// so we can use our usual SSH access for things we need to authenticate to.
+	// Also mount the Github CLI config so we can use it to authenticate to Github with
+	// the included OAuth token, and use Github CLI and Github Copilot CLI.
+	// This only works if you have already authenticated to Github with the CLI on the host.
+	// Usually you will find these in ~/.ssh and ~/.config/gh respectively.
+	"remoteUser": "root",
+	"mounts": [
+	 	"source=${localEnv:USERPROFILE}\\.ssh,target=/root/.ssh,type=bind,consistency=cached",
+		"source=${localEnv:USERPROFILE}\\.config\\gh,target=/root/.config/gh,type=bind,consistency=cached"
+	],
+	"remoteEnv": {
+		"REPO_ROOT": "${localWorkspaceFolder}",
+		"REPO_ROOT_NAME": "${localWorkspaceFolderBasename}",
+		"WWW_ROOT": "/var/www/"
+	},
+
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	// "forwardPorts": [],
+
+	// Use 'postCreateCommand' to run commands after the container is created.
+	// This file currently:
+	// - Configs the Github CLI to use SSH for authentication if you have the keys auto-mounted
+	// - Installs the gh copilot extension
+	"postCreateCommand": "bash -i .devcontainer/post_create.sh"
+
+	// Configure tool-specific properties.
+	// "customizations": {},
+
+}

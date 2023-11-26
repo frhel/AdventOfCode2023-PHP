@@ -1,0 +1,22 @@
+{
+    "name": "frhel/adventofcode2023php",
+    "description": "Advent of Code 2023 solutions in PHP",
+    "type": "project",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "frhel\\adventofcode2023php\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Freyr H",
+            "email": "freyr.helga@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "php-ds/php-ds": "^1.4",
+        "symfony/console": "^6.3"
+    }
+}
