@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace frhel\adventofcode2023php\Solutions;
 
@@ -18,7 +19,7 @@ class Day1 extends Command
     protected static $defaultDescription = 'Advent of Code 2023 Solution';
     protected $dataFile;
     protected $dataFileEx;
-    protected $letters;
+    protected $numbers;
 
     function __construct($day = null) {
         if ($day) {
@@ -29,7 +30,7 @@ class Day1 extends Command
         $this->dataFile = __DIR__ . '/../../data/day_' . self::$day;
         $this->dataFileEx = __DIR__ . '/../../data/day_' . self::$day . '.ex';
 
-        $this->letters = [
+        $this->numbers = [
             "one" => "1",
             "two" => "2",
             "three" => "3",
@@ -56,8 +57,10 @@ class Day1 extends Command
         
         $io->writeln(self::$defaultName . ' - ' . self::$defaultDescription);
 
+        // Right answer: 55607
         $io->success('Part 1 Solution: ' . $this->solve($data));
 
+        // Right answer: 55291
         $io->success('Part 2 Solution: ' . $this->solve($data, true));
 
         $io->writeln('Total time: ' . $overallTimer->stop());
@@ -65,6 +68,7 @@ class Day1 extends Command
     }    
 
     protected function strpos_all($haystack, $needle) {
+
         $offset = 0;
         $allpos = array();
         while (($pos = strpos($haystack, $needle, $offset)) !== false) {
@@ -72,16 +76,20 @@ class Day1 extends Command
             $allpos[$pos] = $needle;
         }
         return $allpos;
+
     }
 
     protected function merge_results($collection, $result) {
+
         foreach ($result as $pos => $val) {
             $collection[$pos] = $val;
         }
         return $collection;
+
     }
 
     protected function translate_nrs($str, $needles, $use_letters = false) {
+
         $found = [];
         foreach ($needles as $key => $value) {
             if (strpos($str, $value) !== false) {
@@ -99,28 +107,31 @@ class Day1 extends Command
         ksort($found);
 
         return $found;
+
     }
 
     protected function solve($data, $use_letters = false) {
+
         $total = 0;
         $count = 0;
 
         foreach ($data as $key => $value) {
             $count++;
             $data[$key] = trim($value);
-            $numbers_found = $this->translate_nrs($data[$key], $this->letters, $use_letters);            
+            $numbers_found = $this->translate_nrs($data[$key], $this->numbers, $use_letters);            
             if (count($numbers_found) < 1) {
                 continue;
             }
 
             $firstIndex = array_key_first($numbers_found);
-            $first = is_numeric($numbers_found[$firstIndex]) ? $numbers_found[$firstIndex] : $this->letters[$numbers_found[$firstIndex]];
+            $first = is_numeric($numbers_found[$firstIndex]) ? $numbers_found[$firstIndex] : $this->numbers[$numbers_found[$firstIndex]];
             $lastIndex = array_key_last($numbers_found);
-            $last = is_numeric($numbers_found[$lastIndex]) ? $numbers_found[$lastIndex] : $this->letters[$numbers_found[$lastIndex]];
+            $last = is_numeric($numbers_found[$lastIndex]) ? $numbers_found[$lastIndex] : $this->numbers[$numbers_found[$lastIndex]];
 
             $total += intval("{$first}{$last}");
         }
         return $total;
+
     }
 
 }
