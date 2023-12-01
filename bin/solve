@@ -2,10 +2,10 @@
 <?php
 require_once __DIR__ . '/../vendor/autoload.php';
 use Symfony\Component\Console\Application;
-use frhel\adventofcode2023php\Solutions\Day;
+use frhel\adventofcode2023php\Solutions\Day1;
 
 $application = new Application();
 
-$application->add(new Day());
+$application->add(new Day1());
 
 $application->run();
