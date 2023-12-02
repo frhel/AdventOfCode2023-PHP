@@ -136,7 +136,7 @@ class Day2 extends Command
 
             foreach ($subsets as $subset) {
                 $subset_split = explode(',', $subset);
-                $rounds = [
+                $round = [
                     "red" => 0,
                     "green" => 0,        
                     "blue" => 0,
@@ -145,10 +145,10 @@ class Day2 extends Command
                 foreach ($subset_split as $colour) {
                     $colour = trim($colour);
                     $colour_split = explode(' ', $colour);
-                    $rounds[$colour_split[1]] = $colour_split[0];                    
+                    $round[$colour_split[1]] = $colour_split[0];                    
                 }
 
-                $game_data["rounds"][] = $rounds;
+                $game_data["rounds"][] = $round;
             }      
             
             $games[] = $game_data;
