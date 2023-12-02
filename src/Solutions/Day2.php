@@ -53,6 +53,7 @@ class Day2 extends Command
         
         $io->writeln(self::$defaultName . ' - ' . self::$defaultDescription);
 
+        // Solve once for both parts so we don't have to loop twice
         $solution = $this->solve($data);
 
         // Right answer: 2237
