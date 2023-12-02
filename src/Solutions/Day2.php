@@ -22,12 +22,7 @@ class Day2 extends Command
     protected $colors;
     protected $io;
 
-    function __construct($day = null) {
-        if ($day) {
-            self::$day = $day;
-            self::$defaultName = 'Day ' . $day;
-        }
-        
+    function __construct() {        
         $this->dataFile = __DIR__ . '/../../data/day_' . self::$day;
         $this->dataFileEx = __DIR__ . '/../../data/day_' . self::$day . '.ex';
 

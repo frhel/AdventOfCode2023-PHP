@@ -13,8 +13,8 @@ use frhel\adventofcode2023php\Tools\Timer;
 
 class Day extends Command
 {
-    protected static $day = 0;
-    protected static $defaultName = 'Template';
+    protected static $day;
+    protected static $defaultName;
     protected static $defaultDescription = 'Advent of Code 2023 Solution';
     protected $dataFile;
     protected $exampleFile;
@@ -36,13 +36,29 @@ class Day extends Command
         $io = new SymfonyStyle($input, $output);
         $overallTimer = new Timer();
 
-        $data = file_get_contents($this->dataFile);
+        $data = $this->parse_input($this->dataFile);
 
         $io->writeln(self::$defaultName . ' - ' . self::$defaultDescription);
 
+        // Right answer: 
+        $io->success('Part 1 Solution: ' .  $this->solve($data));
 
-        $io->writeln('Total time: ' . $overallTimer->stop());        
+        // Right answer: 
+        //$io->success('Part 2 Solution: ' .  $this->solve($data));
+        $io->writeln('Total time: ' . $overallTimer->stop());  
+
         return Command::SUCCESS;
+    }
+
+    protected function solve($data) {
+        $solution = 0;
+        
+        return $solution;
+    }
+
+    protected function parse_input($data) {        
+        $data = preg_split('/\r\n|\r|\n/', file_get_contents($this->dataFile));
+        return $data;
     }
 
 }
