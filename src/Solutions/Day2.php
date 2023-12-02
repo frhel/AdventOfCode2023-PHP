@@ -49,12 +49,12 @@ class Day2 extends Command
         // Split by newline cross platform
         $data = preg_split('/\r\n|\r|\n/', file_get_contents($this->dataFile));
         // $data = preg_split('/\r\n|\r|\n/', file_get_contents($this->dataFileEx));
-        $data = $this->parse_input($data);  
+        $games = $this->parse_input($data);  
         
         $io->writeln(self::$defaultName . ' - ' . self::$defaultDescription);
 
         // Solve once for both parts so we don't have to loop twice
-        $solution = $this->solve($data);
+        $solution = $this->solve($games);
 
         // Right answer: 2237
         $io->success('Part 1 Solution: ' .  $solution["viable_games"]);
@@ -68,18 +68,16 @@ class Day2 extends Command
     }
     
 
-    protected function solve($data) {
-
+    protected function solve($games) {
         $viable_games = [];
         $game_powers = [];
 
-        foreach ($data as $game) {
-            
+        foreach ($games as $game) {            
             if ($this->is_viable($game)) {
                 $viable_games[] = $game["id"];
             }
 
-            $game = $this->find_max($game);
+            $game = $this->find_max_color_values($game);
             $game_powers[] = $game["red"] * $game["green"] * $game["blue"];            
         }
         
@@ -90,32 +88,42 @@ class Day2 extends Command
     }
 
     protected function is_viable($game) {
-
         $viable = true;
 
         foreach ($game["rounds"] as $round) {
-
-            $max = $this->find_max($game);
-
-            if ($max["red"] > $this->colors["red"]
-                || $max["green"] > $this->colors["green"]
-                || $max["blue"] > $this->colors["blue"]
+            if ($round["red"] > $this->colors["red"]
+                || $round["green"] > $this->colors["green"]
+                || $round["blue"] > $this->colors["blue"]
             ) {
                 $viable = false;
                 break;
             }
         }
 
-        return $viable;
-        
+        return $viable;        
+    }
+
+    protected function find_max_color_values($game) {        
+        $max = [
+            "id" => $game["id"],
+            "red" => 0,
+            "green" => 0,
+            "blue" => 0
+        ];
+
+        foreach($game["rounds"] as $round) {
+            foreach ($round as $key => $value) {
+                $max[$key] = max($max[$key], $value);
+            }
+        }       
+
+        return $max;
     }
 
     protected function parse_input($data) {
-
         $games = [];
 
         foreach ($data as $line) {
-
             $game_data = [
                 "id" => 0,
                 "rounds" => [],
@@ -144,33 +152,8 @@ class Day2 extends Command
             }      
             
             $games[] = $game_data;
-
         }
 
         return $games;
-
     }
-
-
-    protected function find_max($game) {
-        
-        $max = [
-            "id" => $game["id"],
-            "red" => 0,
-            "green" => 0,
-            "blue" => 0
-        ];
-
-        foreach($game["rounds"] as $round) {
-
-            foreach ($round as $key => $value) {
-
-                $max[$key] = max($max[$key], $value);
-
-            }
-        }       
-
-        return $max;
-    }
-
 }
