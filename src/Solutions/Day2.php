@@ -77,8 +77,8 @@ class Day2 extends Command
                 $viable_games[] = $game["id"];
             }
 
-            $game = $this->find_max_color_values($game);
-            $game_powers[] = $game["red"] * $game["green"] * $game["blue"];            
+            $max_color_vals = $this->find_max_color_values($game);
+            $game_powers[] = $max_color_vals["red"] * $max_color_vals["green"] * $max_color_vals["blue"];            
         }
         
         return [
