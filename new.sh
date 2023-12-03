@@ -38,7 +38,6 @@ if ! grep -q "use frhel\\\adventofcode2023php\\\Solutions\\\Day${DAY};" bin/solv
 fi
 # Add a new application to the bin/solve file in the format of
 # $application->add(new DayXX());
-# if it doesn't already exist
 if ! grep -q "\$application->add(new Day${DAY}());" bin/solve; then
     sed -i "s/\/\/ Add new applications here/\/\/ Add new applications here\n\$application->add(new Day${DAY}());/g" bin/solve
 
@@ -48,7 +47,7 @@ fi
 # Create 2 new data files for the day if they don't already exist
 if [ ! -f data/day_${DAY} ]; then
     touch data/day_${DAY}
-    touch data/day_${DAY}_ex
+    touch data/day_${DAY}.ex
 
     echo -e "Created new data files: ${BLUE}data/day_${DAY}${NC} and ${BLUE}data/day_${DAY}_ex${NC}"
 fi

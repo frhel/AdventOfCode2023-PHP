@@ -18,15 +18,13 @@ class Day extends Command
     protected static $defaultDescription = 'Advent of Code 2023 Solution';
     protected $dataFile;
     protected $exampleFile;
+    protected $ex;
 
-    function __construct($day = null) {
-        if ($day) {
-            self::$day = $day;
-            self::$defaultName = 'Day ' . $day;
-        }
-        
-        $this->dataFile = __DIR__ . '/../../data/day_' . self::$day . '.data';
-        $this->exampleFile = __DIR__ . '/../../data/day_' . self::$day . '.example';
+    function __construct() {
+        $this->ex = 0;
+
+        $this->dataFile = __DIR__ . '/../../data/day_' . self::$day;
+        $this->exampleFile = __DIR__ . '/../../data/day_' . self::$day . '.ex';
 
         parent::__construct();
     }
@@ -36,7 +34,9 @@ class Day extends Command
         $io = new SymfonyStyle($input, $output);
         $overallTimer = new Timer();
 
-        $data = $this->parse_input($this->dataFile);
+        // Default to example data. Just comment out this line to use the real data.
+        $this->ex = 1;
+        $data = $this->parse_input($this->ex === 1 ? $this->exampleFile : $this->dataFile);
 
         $io->writeln(self::$defaultName . ' - ' . self::$defaultDescription);
 

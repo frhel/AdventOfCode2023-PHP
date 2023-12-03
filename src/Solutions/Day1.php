@@ -21,11 +21,7 @@ class Day1 extends Command
     protected $dataFileEx;
     protected $numbers;
 
-    function __construct($day = null) {
-        if ($day) {
-            self::$day = $day;
-            self::$defaultName = 'Day ' . $day;
-        }
+    function __construct() {
         
         $this->dataFile = __DIR__ . '/../../data/day_' . self::$day;
         $this->dataFileEx = __DIR__ . '/../../data/day_' . self::$day . '.ex';
