@@ -33,13 +33,13 @@ class Day extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output) {
         $io = new SymfonyStyle($input, $output);
+        $io->writeln(self::$defaultName . ' - ' . self::$defaultDescription);
+
         $overallTimer = new Timer();
 
         // Default to example data. Just comment out this line to use the real data.
         $this->ex = 1;
         $data = $this->parse_input($this->ex === 1 ? $this->exampleFile : $this->dataFile);
-
-        $io->writeln(self::$defaultName . ' - ' . self::$defaultDescription);
 
         // Right answer: 
         $io->success('Part 1 Solution: ' .  $this->solve($data));
@@ -54,11 +54,16 @@ class Day extends Command
     protected function solve($data) {
         $solution = 0;
         
+
+
         return $solution;
     }
 
     protected function parse_input($data) {        
-        $data = preg_split('/\r\n|\r|\n/', file_get_contents($this->dataFile));
+        $data = preg_split('/\r\n|\r|\n/', file_get_contents($data));
+
+
+
         return $data;
     }
 
