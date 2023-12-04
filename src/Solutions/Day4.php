@@ -78,10 +78,9 @@ class Day4 extends Command
             // Count the wins for this card once
             $win_count = count(array_intersect($winners, $numbers));
             
-            // At least 1 win, count the points, starting at 1
-            $points = $win_count > 0 ? 1 : 0;
-            // Double the points for each win after the first
-            for ($i = 1; $i < $win_count; $i++) { $points *= 2;}
+            // If the card has more than one win, it's worth 2^(wins-1) points
+            // otherwise it's worth $win_count points (1 or 0)
+            $points = $win_count > 1 ? pow(2, $win_count - 1) : $win_count;
             
             // For every copy of this card, add the number of wins to the count of the next $j cards
             // That way we keep track of how many cards are in the game as we go
