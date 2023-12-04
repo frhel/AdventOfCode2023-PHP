@@ -30,7 +30,10 @@ class Day4 extends Command
         parent::__construct();
     }
 
-
+    // ----------------------------------------------------------------------------
+    // Problem description: https://adventofcode.com/2023/day/04
+    // Solution by: https://github.com/frhel (Fry)
+    // ----------------------------------------------------------------------------
     protected function execute(InputInterface $input, OutputInterface $output) {
         $io = new SymfonyStyle($input, $output);
         $io->writeln(self::$defaultName . ' - ' . self::$defaultDescription);
@@ -54,6 +57,15 @@ class Day4 extends Command
         return Command::SUCCESS;
     }
 
+    /**
+     * Solves both parts of the problem at the same time
+     * 
+     * @param array $cards
+     * @return array [part1, part2]
+     * 
+     * Part 1: The sum of all points for all cards
+     * Part 2: The total number of cards and card copies in the game
+     */
     protected function solve($cards) {
         $point_sum = 0;
         $total_cards = 0;
@@ -89,6 +101,12 @@ class Day4 extends Command
         return [$point_sum, $total_cards];
     }
 
+    /**
+     * Parses the input file into an array of cards with winners, numbers, and copy count
+     * 
+     * @param string $data
+     * @return array
+     */
     protected function parse_input($data) {        
         $data = preg_split('/\r\n|\r|\n/', file_get_contents($data));
 

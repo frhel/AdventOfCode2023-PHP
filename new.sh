@@ -22,9 +22,11 @@ if [ ! -f src/Solutions/Day${DAY}.php ]; then
     # 1. Replace the class name
     # 2. Replace the $day number
     # 3. Replace the defaultName to be DayXX
+    # 4. Update the link to the problem description
     sed -i "s/class Day/class Day${DAY}/g" src/Solutions/Day${DAY}.php
     sed -i "s/protected static \$day;/protected static \$day = ${DAY};/g" src/Solutions/Day${DAY}.php
     sed -i "s/protected static \$defaultName;/protected static \$defaultName = 'Day${DAY}';/g" src/Solutions/Day${DAY}.php
+    sed -i "s/Problem Description:/Problem Description: https:\/\/adventofcode.com\/2023\/day\/${DAY}/g" src/Solutions/Day${DAY}.php
 
     echo -e "Created new file: ${BLUE}src/Solutions/Day${DAY}.php${NC}"
 fi
