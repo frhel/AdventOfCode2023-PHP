@@ -38,12 +38,18 @@ class Day4 extends Command
         $io = new SymfonyStyle($input, $output);
         $io->writeln(self::$defaultName . ' - ' . self::$defaultDescription);
 
-        $overallTimer = new Timer();
+        // The test data is so small we may as well just load both files in anyways
+        $data = file_get_contents($this->dataFile);
+        $data_example = file_get_contents($this->exampleFile);
 
-        // Default to example data. Just comment out this line to use the real data.
         // $this->ex = 1;
-        $data = $this->parse_input($this->ex === 1 ? $this->exampleFile : $this->dataFile);
-
+        $data = $this->parse_input($this->ex === 1 ? $data_example : $data);
+        
+        // ====================================================================== //
+        // ============================ Start Solving =========================== //
+        // ====================================================================== //
+        // Start the timer
+        $overallTimer = new Timer();
         $solution = $this->solve($data);
 
         // Right answer: 15205
@@ -70,7 +76,7 @@ class Day4 extends Command
         $point_sum = 0;
         $total_cards = 0;
 
-        for ($key = 0; $key < count($cards); $key++) {
+        foreach ($cards as $key => $card) {
             $card = $cards[$key];
             $winners = $cards[$key]['winners'];
             $numbers = $cards[$key]['numbers'];
@@ -107,7 +113,7 @@ class Day4 extends Command
      * @return array
      */
     protected function parse_input($data) {        
-        $data = preg_split('/\r\n|\r|\n/', file_get_contents($data));
+        $data = preg_split('/\r\n|\r|\n/', $data);
 
         $data_out = [];
         
