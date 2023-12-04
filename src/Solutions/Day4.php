@@ -12,8 +12,6 @@ use Ds\Vector as vec;
 
 use frhel\adventofcode2023php\Tools\Timer;
 
-
-
 class Day4 extends Command
 {
     protected static $day = 4;

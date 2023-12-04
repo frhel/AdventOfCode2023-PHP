@@ -10,8 +10,6 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 use frhel\adventofcode2023php\Tools\Timer;
 
-
-
 class Day extends Command
 {
     protected static $day;
@@ -30,22 +28,34 @@ class Day extends Command
         parent::__construct();
     }
 
-
+    // ----------------------------------------------------------------------------
+    // Problem description:
+    // Solution by: https://github.com/frhel (Fry)
+    // ----------------------------------------------------------------------------
     protected function execute(InputInterface $input, OutputInterface $output) {
         $io = new SymfonyStyle($input, $output);
         $io->writeln(self::$defaultName . ' - ' . self::$defaultDescription);
 
-        $overallTimer = new Timer();
+        // The test data is so small we may as well just load both files in anyways
+        $data = file_get_contents($this->dataFile);
+        $data_example = file_get_contents($this->exampleFile);
 
         // Default to example data. Just comment out this line to use the real data.
         $this->ex = 1;
         $data = $this->parse_input($this->ex === 1 ? $this->exampleFile : $this->dataFile);
+
+        // ====================================================================== //
+        // ============================ Start Solving =========================== //
+        // ====================================================================== //
+        // Start the timer
+        $overallTimer = new Timer();
 
         // Right answer: 
         $io->success('Part 1 Solution: ' .  $this->solve($data));
 
         // Right answer: 
         //$io->success('Part 2 Solution: ' .  $this->solve($data));
+        
         $io->writeln('Total time: ' . $overallTimer->stop());  
 
         return Command::SUCCESS;
