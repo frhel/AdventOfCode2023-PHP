@@ -55,12 +55,13 @@ class Day4 extends Command
         $solution = $this->solve($data);
 
         // Right answer: 15205
-        $io->success('Part 1 Solution: ' .  $solution[0]);
+        //echo 'Part 1 Solution: ' .  $solution[0] . PHP_EOL;
+        printf('Part 1 Solution: %d' . PHP_EOL, $solution[0]);
 
         // Right answer: 6189740
-        $io->success('Part 2 Solution: ' .  $solution[1]);
-
-        $io->writeln('Total time: ' . $overallTimer->stop());  
+        printf('Part 2 Solution: %d' . PHP_EOL, $solution[1]);
+ 
+        printf('Total time: %s' . PHP_EOL, $overallTimer->stop());
 
         return Command::SUCCESS;
     }
