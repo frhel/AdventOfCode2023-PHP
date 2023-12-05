@@ -10,10 +10,10 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 use frhel\adventofcode2023php\Tools\Timer;
 
-class Day extends Command
+class Day5 extends Command
 {
-    protected static $day;
-    protected static $defaultName;
+    protected static $day = 5;
+    protected static $defaultName = 'Day5';
     protected static $defaultDescription = 'Advent of Code 2023 Solution';
     protected $dataFile;
     protected $exampleFile;
