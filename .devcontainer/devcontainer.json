@@ -1,12 +1,16 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
 // README at: https://github.com/devcontainers/templates/tree/main/src/ubuntu
 {
-	"name": "PHP on Debian",
+	"name": "Ubuntu",
 	"build": {"dockerfile": "Dockerfile"},
 	"features": {
 		"ghcr.io/devcontainers/features/github-cli:1": {
 			"installDirectlyFromGitHubRelease": true,
 			"version": "latest"
+		},
+		"ghcr.io/shyim/devcontainers-features/php": {
+			"version": "8.0",
+			"installComposer": true,
 		}
 	},
 
