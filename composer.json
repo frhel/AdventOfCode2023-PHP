@@ -17,6 +17,7 @@
     "minimum-stability": "stable",
     "require": {
         "php-ds/php-ds": "^1.4",
-        "symfony/console": "^6.3"
+        "symfony/console": "^6.3",
+        "amphp/parallel": "^2.2"
     }
 }
