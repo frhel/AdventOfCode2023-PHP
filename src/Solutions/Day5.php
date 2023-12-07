@@ -131,9 +131,7 @@ class Day5 extends Command
         }
         
         return $ranges;
-    }
-
-    
+    }    
 
     protected function parse_input($data) {        
         $data = preg_split('/\r\n|\r|\n/', $data);
