@@ -21,8 +21,11 @@ chown -R $USER:$USER .
 # It immediately exits and cancels the action if a GitHub CLI token is not found in the host system's ~/.config/gh/config.yml
 . $REPO_ROOT/.devcontainer/setup_gh_copilot_cli.sh
 
-# Include the .devcontainer/setup_apache.sh script to install Apache and configure it to serve the site
-. $REPO_ROOT/.devcontainer/setup_apache.sh
+# add the php 8.0 repository
+# echo -e "${BLUE}Adding the php 8.0 repository${NC}"
+# add-apt-repository ppa:ondrej/php
+# apt-get update
+# apt-get install php-process
 
 # Run Composer install
 echo -e "${BLUE}Running Composer install${NC}"
