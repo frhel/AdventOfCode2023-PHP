@@ -1,66 +1,51 @@
 <?php
+// ----------------------------------------------------------------------------
+// Problem description: https://adventofcode.com/2023/day/2
+// Solution by: https://github.com/frhel (Fry)
+// ----------------------------------------------------------------------------
 declare(strict_types=1);
 
 namespace frhel\adventofcode2023php\Solutions;
 
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
-
 use frhel\adventofcode2023php\Tools\Timer;
+use frhel\adventofcode2023php\Tools\Prenta;
 
 
 
-class Day2 extends Command
+class Day2
 {
-    protected static $day = 2;
-    protected static $defaultName = 'Day2';
-    protected static $defaultDescription = 'Advent of Code 2023 Solution';
-    protected $dataFile;
-    protected $dataFileEx;
     protected $colors;
-    protected $io;
 
-    function __construct() {        
-        $this->dataFile = __DIR__ . '/../../data/day_' . self::$day;
-        $this->dataFileEx = __DIR__ . '/../../data/day_' . self::$day . '.ex';
-
+    function __construct(private int $day) {
+        $prenta = new Prenta();
         $this->colors = [
             "red" => "12",
             "green" => "13",        
             "blue" => "14",
         ];
 
-        parent::__construct();
-    }
-
-
-    protected function execute(InputInterface $input, OutputInterface $output) {
-        system('clear');
-        $io = new SymfonyStyle($input, $output);
         $overallTimer = new Timer();
 
-        // Split by newline cross platform
-        $data = preg_split('/\r\n|\r|\n/', file_get_contents($this->dataFile));
-        // $data = preg_split('/\r\n|\r|\n/', file_get_contents($this->dataFileEx));
-        $games = $this->parse_input($data);  
         
-        $io->writeln(self::$defaultName . ' - ' . self::$defaultDescription);
+        // The test data is so small we may as well just load both files in anyways
+        $data_full = file_get_contents(__DIR__ . '/../../data/day_' . $day);
+        $data_example = file_get_contents(__DIR__ . '/../../data/day_' . $day . '.ex');
+        $games = $this->parse_input($data_full);  
 
         // Solve once for both parts so we don't have to loop twice
         $solution = $this->solve($games);
 
         // Right answer: 2237
-        $io->success('Part 1 Solution: ' .  $solution["viable_games"]);
+        $prenta->answer($solution["viable_games"], 1);
 
         // Right answer: 66681
-        $io->success('Part 2 Solution: ' .  $solution["game_powers"]);
+        $prenta->answer($solution["game_powers"], 2);
 
-        $io->writeln('Total time: ' . $overallTimer->stop());
-
-        return Command::SUCCESS;
+        // Stop the timer
+        $time_done = $overallTimer->stop();
+        $prenta->time($time_done, 'Overall Time');
     }
+
     
 
     protected function solve($games) {
@@ -115,7 +100,8 @@ class Day2 extends Command
         return $max;
     }
 
-    protected function parse_input($data) {
+    protected function parse_input($data) {        
+        $data = preg_split('/\r\n|\r|\n/', $data);
         $games = [];
 
         foreach ($data as $line) {

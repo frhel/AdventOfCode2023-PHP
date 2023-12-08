@@ -1,49 +1,30 @@
 <?php
+// ----------------------------------------------------------------------------
+// Problem description: https://adventofcode.com/2023/day/4
+// Solution by: https://github.com/frhel (Fry)
+// ----------------------------------------------------------------------------
 declare(strict_types=1);
 
 namespace frhel\adventofcode2023php\Solutions;
 
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
-
 use Ds\Vector as vec;
 
 use frhel\adventofcode2023php\Tools\Timer;
+use frhel\adventofcode2023php\Tools\Prenta;
 
-class Day4 extends Command
+class Day4
 {
-    protected static $day = 4;
-    protected static $defaultName = 'Day4';
-    protected static $defaultDescription = 'Advent of Code 2023 Solution';
-    protected $dataFile;
-    protected $exampleFile;
-    protected $ex;
 
-    function __construct() {
-        $this->ex = 0;
-
-        $this->dataFile = __DIR__ . '/../../data/day_' . self::$day;
-        $this->exampleFile = __DIR__ . '/../../data/day_' . self::$day . '.ex';
-
-        parent::__construct();
-    }
-
-    // ----------------------------------------------------------------------------
-    // Problem description: https://adventofcode.com/2023/day/04
-    // Solution by: https://github.com/frhel (Fry)
-    // ----------------------------------------------------------------------------
-    protected function execute(InputInterface $input, OutputInterface $output) {
-        $io = new SymfonyStyle($input, $output);
-        $io->writeln(self::$defaultName . ' - ' . self::$defaultDescription);
+    function __construct(private int $day) {
+        $prenta = new Prenta();
+        $ex = 0;
 
         // The test data is so small we may as well just load both files in anyways
-        $data = file_get_contents($this->dataFile);
-        $data_example = file_get_contents($this->exampleFile);
+        $data_full = file_get_contents(__DIR__ . '/../../data/day_' . $day);
+        $data_example = file_get_contents(__DIR__ . '/../../data/day_' . $day . '.ex');
 
-        // $this->ex = 1;
-        $data = $this->parse_input($this->ex === 1 ? $data_example : $data);
+        // $ex = 1;
+        $data = $this->parse_input($ex === 1 ? $data_example : $data_full);
         
         // ====================================================================== //
         // ============================ Start Solving =========================== //
@@ -55,27 +36,27 @@ class Day4 extends Command
         $solution = $this->solve($data);
 
         // Right answer: 15205
-        printf('Part 1 Solution: %d' . PHP_EOL, $solution[0]);
+        $prenta->answer($solution[0], 1);
 
         // Right answer: 6189740
-        printf('Part 2 Solution: %d' . PHP_EOL, $solution[1]);
+        $prenta->answer($solution[1], 2);
  
-        printf('Total time: %s' . PHP_EOL, $overallTimer->stop());
-
-        return Command::SUCCESS;
+        // Stop the timer
+        $time_done = $overallTimer->stop();
+        $prenta->time($time_done, 'Overall Time');
     }
+ 
 
     /**
      * Solves both parts of the problem at the same time
      * 
-     * @param array $cards
+     * @param vec $cards
      * @return array [part1, part2]
      * 
      * Part 1: The sum of all points for all cards
      * Part 2: The total number of cards and card copies in the game
      */
     protected function solve($cards) {
-        $cards = new vec($cards);
         $point_sum = 0;
         $total_cards = 0;
 
@@ -115,7 +96,7 @@ class Day4 extends Command
      * Parses the input file into an array of cards with winners, numbers, and copy count
      * 
      * @param string $data
-     * @return Ds\Vector
+     * @return vec
      */
     protected function parse_input($data) {        
         $data = preg_split('/\r\n|\r|\n/', $data);

@@ -1,71 +1,59 @@
 <?php
+// ----------------------------------------------------------------------------
+// Problem description: https://adventofcode.com/2023/day/5
+// Solution by: https://github.com/frhel (Fry)
+// ----------------------------------------------------------------------------
 declare(strict_types=1);
 
 namespace frhel\adventofcode2023php\Solutions;
-
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 use Amp\Future;
 use Amp\Parallel\Worker;
 
 use frhel\adventofcode2023php\Tools\Timer;
 use frhel\adventofcode2023php\Tools\RunTask;
+use frhel\adventofcode2023php\Tools\Prenta;
 
-class Day5 extends Command
+class Day5
 {
-    protected static $day = 5;
-    protected static $defaultName = 'Day5';
-    protected static $defaultDescription = 'Advent of Code 2023 Solution';
-    protected $dataFile;
-    protected $exampleFile;
-    protected $ex;
 
-    function __construct() {
-        $this->ex = 0;
-
-        $this->dataFile = __DIR__ . '/../../data/day_' . self::$day;
-        $this->exampleFile = __DIR__ . '/../../data/day_' . self::$day . '.ex';
-
-        parent::__construct();
-    }
-
-    // ----------------------------------------------------------------------------
-    // Problem description:
-    // Solution by: https://github.com/frhel (Fry)
-    // ----------------------------------------------------------------------------
-    protected function execute(InputInterface $input, OutputInterface $output) {
-        $io = new SymfonyStyle($input, $output);
-        $io->writeln(self::$defaultName . ' - ' . self::$defaultDescription);
+    function __construct(private int $day) {
+        $prenta = new Prenta();
+        $ex = 0;
 
         // The test data is so small we may as well just load both files in anyways
-        $data_full = file_get_contents($this->dataFile);
-        $data_example = file_get_contents($this->exampleFile);
+        $data_full = file_get_contents(__DIR__ . '/../../data/day_' . $day);
+        $data_example = file_get_contents(__DIR__ . '/../../data/day_' . $day . '.ex');
 
-        // Default to example data. Just comment out this line to use the real data.
-        // $this->ex = 1;
-        $data = $this->parse_input($this->ex === 1 ? $data_example : $data_full);
-
+        // $ex = 1;
+        $data = $this->parse_input($ex === 1 ? $data_example : $data_full);
+        
         // ====================================================================== //
         // ============================ Start Solving =========================== //
         // ====================================================================== //
         // Start the timer
         $overallTimer = new Timer();
 
+        // Solve both parts at the same time. See solve() docblock for more info
         $solution = $this->solve($data);
 
         // Right answer: 282277027
-        $io->success('Part 1 Solution: ' .  $solution[0]);
+        $prenta->answer($solution[0], 1);
 
-        // Right answer: 
-        $io->success('Part 2 Solution: ' .  $solution[1]);
-        
-        $io->writeln('Total time: ' . $overallTimer->stop());  
-
-        return Command::SUCCESS;
+        // Right answer: 11554135
+        $prenta->answer($solution[1], 2);
+ 
+        // Stop the timer
+        $time_done = $overallTimer->stop();
+        $prenta->time($time_done, 'Overall Time');
     }
 
+    
+    // ====================================================================== //
+    // I plan on rewriting this whole thing from scratch. I'm not happy with  //
+    // how it turned out. I'm not happy with the code. I'm not happy with the //
+    // performance. I'm not happy with the fact that I had to use threads to  //
+    // get it to run in a reasonable amount of time. There is a better way.   //
+    // ====================================================================== //
     protected function solve($data) {     
         $timer = new Timer();
         $part1 = INF;
