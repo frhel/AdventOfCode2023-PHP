@@ -8,9 +8,9 @@
 			"installDirectlyFromGitHubRelease": true,
 			"version": "latest"
 		},
-		"ghcr.io/shyim/devcontainers-features/php": {
-			"version": "8.0",
+		"ghcr.io/devcontainers/features/php": {
 			"installComposer": true,
+			"version": "latest"
 		}
 	},
 

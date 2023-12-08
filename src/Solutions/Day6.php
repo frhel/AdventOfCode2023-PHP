@@ -1,79 +1,62 @@
 <?php
+// ----------------------------------------------------------------------------
+// Problem description: https://adventofcode.com/2023/day/6
+// Solution by: https://github.com/frhel (Fry)
+// ----------------------------------------------------------------------------
 declare(strict_types=1);
 
 namespace frhel\adventofcode2023php\Solutions;
 
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
-
 use frhel\adventofcode2023php\Tools\Timer;
+use frhel\adventofcode2023php\Tools\Prenta;
 
-class Day6 extends Command
+class Day6
 {
-    protected static $day = 6;
-    protected static $defaultName = 'Day6';
-    protected static $defaultDescription = 'Advent of Code 2023 Solution';
-    protected $dataFile;
-    protected $exampleFile;
-    protected $ex;
 
-    function __construct() {
-        $this->ex = 0;
-
-        $this->dataFile = __DIR__ . '/../../data/day_' . self::$day;
-        $this->exampleFile = __DIR__ . '/../../data/day_' . self::$day . '.ex';
-
-        parent::__construct();
-    }
-
-    // ----------------------------------------------------------------------------
-    // Problem description:
-    // Solution by: https://github.com/frhel (Fry)
-    // ----------------------------------------------------------------------------
-    protected function execute(InputInterface $input, OutputInterface $output) {
-        $io = new SymfonyStyle($input, $output);
-        $io->writeln(self::$defaultName . ' - ' . self::$defaultDescription);
+    function __construct(private int $day) {
+        $prenta = new Prenta();
+        $ex = 0;
 
         // The test data is so small we may as well just load both files in anyways
-        $data_full = file_get_contents($this->dataFile);
-        $data_example = file_get_contents($this->exampleFile);
+        $data_full = file_get_contents(__DIR__ . '/../../data/day_' . $day);
+        $data_example = file_get_contents(__DIR__ . '/../../data/day_' . $day . '.ex');
 
-        // Default to example data. Just comment out this line to use the real data.
-        // $this->ex = 1;
-        $data = $this->parse_input($this->ex === 1 ? $data_example : $data_full);
-
+        // $ex = 1;
+        $data = $this->parse_input($ex === 1 ? $data_example : $data_full);
+        
         // ====================================================================== //
         // ============================ Start Solving =========================== //
         // ====================================================================== //
         // Start the timer
         $overallTimer = new Timer();
 
+        // Solve both parts at the same time. See solve() docblock for more info
         $solution = $this->solve($data);
 
-        // Right answer: 
-        $io->success('Part 1 Solution: ' .  $solution[0]);
+        // Right answer: 25200
+        $prenta->answer($solution[0], 1);
 
-        // Right answer: 
-        $io->success('Part 2 Solution: ' .  $solution[1]);
-        
-        $io->writeln('Total time: ' . $overallTimer->stop());  
-
-        return Command::SUCCESS;
+        // Right answer: 36992486
+        $prenta->answer($solution[1], 2);
+ 
+        // Stop the timer
+        $time_done = $overallTimer->stop();
+        $prenta->time($time_done, 'Overall Time');
     }
 
+    /**
+     * Solves both parts of the problem at the same time
+     * 
+     * @param array $cards
+     * @return array [part1, part2]
+     * 
+     * Part 1: The sum of all points for all cards
+     * Part 2: The total number of cards and card copies in the game
+     */
     protected function solve($data) {
         $win_multiplier = 1;
-        for ($i = 0; $i < count($data['time']); $i++) {
-            $time = $data['time'][$i];
-            $distance = $data['distance'][$i];
-            $speed = 0;
-            
-            $win_count = $this->get_win_count($time, $distance);
-
-            echo 'Time: ' . $time . ' Distance: ' . $distance . ' Speed: ' . $speed . ' Win count: ' . $win_count . PHP_EOL;
-
+        for ($i = 0; $i < count($data['time']); $i++) {            
+            $win_count = $this->get_win_count($data['time'][$i], $data['distance'][$i]);
             $win_multiplier *= $win_count;
         }
         
@@ -92,8 +75,7 @@ class Day6 extends Command
 
         for ($i = 0; $i < $time; $i++) {
             $speed += $increment;
-            $remaining_time = $time - $i - 1;
-            if ($speed * $remaining_time > $distance) {
+            if ($speed * ($time - $i - 1) > $distance) {
                 $win_count++;
             }
         }

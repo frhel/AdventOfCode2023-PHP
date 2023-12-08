@@ -1,30 +1,21 @@
 <?php
+// ----------------------------------------------------------------------------
+// Problem description: https://adventofcode.com/2023/day/3
+// Solution by: https://github.com/frhel (Fry)
+// ----------------------------------------------------------------------------
 declare(strict_types=1);
 
 namespace frhel\adventofcode2023php\Solutions;
 
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
-
 use frhel\adventofcode2023php\Tools\Timer;
+use frhel\adventofcode2023php\Tools\Prenta;
 
 
-
-class Day3 extends Command
+class Day3
 {
-    protected static $day = 3;
-    protected static $defaultName = 'Day3';
-    protected static $defaultDescription = 'Advent of Code 2023 Solution';
-    protected $dataFile;
-    protected $exampleFile;
     protected $dirs;
-    protected $ex;
 
-    function __construct() {
-        $this->ex = 0;
-
+    function __construct(private int $day) {
         // Define the 8 directions around a symbol
         // We can use these by adding together the x and y coordinates of a direction
         // with the x and y coordinates of a grid position to get the coordinates of
@@ -43,20 +34,21 @@ class Day3 extends Command
             'NW' => [-1, 1],
         ];
         
-        $this->dataFile = __DIR__ . '/../../data/day_' . self::$day;
-        $this->exampleFile = __DIR__ . '/../../data/day_' . self::$day . '.ex';
+        $prenta = new Prenta();
+        $ex = 0;
 
-        parent::__construct();
-    }
+        // The test data is so small we may as well just load both files in anyways
+        $data_full = file_get_contents(__DIR__ . '/../../data/day_' . $day);
+        $data_example = file_get_contents(__DIR__ . '/../../data/day_' . $day . '.ex');
 
-
-    protected function execute(InputInterface $input, OutputInterface $output) {
-        $io = new SymfonyStyle($input, $output);
-        $io->writeln(self::$defaultName . ' - ' . self::$defaultDescription);
+        // $ex = 1;
+        $data = $this->parse_input($ex === 1 ? $data_example : $data_full);
+        
+        // ====================================================================== //
+        // ============================ Start Solving =========================== //
+        // ====================================================================== //
+        // Start the timer
         $overallTimer = new Timer();
-
-        // $this->ex = 1;
-        $data = $this->parse_input($this->ex === 1 ? $this->exampleFile : $this->dataFile);   
 
         define('GRID', $data); // Define the grid as a constant so we can use it in the functions below
         define('GRID_WIDTH', count($data[0])); // Define the width of the grid as a constant so we can use it in the functions below
@@ -68,14 +60,14 @@ class Day3 extends Command
         $solution = $this->solve();
 
         // Right answer: 512794
-        $io->success('Part 1 Solution: ' .  $solution[0]);
+        $prenta->answer($solution[0], 1);
 
         // Right answer: 67779080
-        $io->success('Part 2 Solution: ' .  $solution[1]);
-        $io->writeln('Total time: ' . $overallTimer->stop());  
+        $prenta->answer($solution[1], 2);
 
-        return Command::SUCCESS;
+        $prenta->time($overallTimer->stop(), 'Overall Time');
     }
+
 
     protected function solve() {
         $parts = []; // Collection of all the valid part numbers for part 1

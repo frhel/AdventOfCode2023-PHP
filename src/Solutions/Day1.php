@@ -1,30 +1,22 @@
 <?php
+// ----------------------------------------------------------------------------
+// Problem description: https://adventofcode.com/2023/day/1
+// Solution by: https://github.com/frhel (Fry)
+// ----------------------------------------------------------------------------
 declare(strict_types=1);
 
 namespace frhel\adventofcode2023php\Solutions;
 
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
-
 use frhel\adventofcode2023php\Tools\Timer;
+use frhel\adventofcode2023php\Tools\Prenta;
 
 
 
-class Day1 extends Command
+class Day1
 {
-    protected static $day = 1;
-    protected static $defaultName = 'Day1';
-    protected static $defaultDescription = 'Advent of Code 2023 Solution';
-    protected $dataFile;
-    protected $dataFileEx;
     protected $numbers;
 
-    function __construct() {
-        
-        $this->dataFile = __DIR__ . '/../../data/day_' . self::$day;
-        $this->dataFileEx = __DIR__ . '/../../data/day_' . self::$day . '.ex';
+    function __construct(private int $day) {
 
         $this->numbers = [
             "one" => "1",
@@ -38,30 +30,27 @@ class Day1 extends Command
             "nine" => "9",
             "zero" => "0",
         ];
-
-        parent::__construct();
-    }
-
-
-    protected function execute(InputInterface $input, OutputInterface $output) {
-        system('clear');
-        $io = new SymfonyStyle($input, $output);
+        
+        $prenta = new Prenta();
         $overallTimer = new Timer();
+        echo 'Day ' . $day . PHP_EOL;
+        // The test data is so small we may as well just load both files in anyways
+        $data_full = file_get_contents(__DIR__ . '/../../data/day_' . $day);
+        $data_example = file_get_contents(__DIR__ . '/../../data/day_' . $day . '.ex');
 
         // Split by newline cross platform
-        $data = preg_split('/\r\n|\r|\n/', file_get_contents($this->dataFile));       
-        
-        $io->writeln(self::$defaultName . ' - ' . self::$defaultDescription);
+        $data = preg_split('/\r\n|\r|\n/', $data_full);       
 
         // Right answer: 55607
-        $io->success('Part 1 Solution: ' . $this->solve($data));
+        $prenta->answer($this->solve($data), 1);
 
         // Right answer: 55291
-        $io->success('Part 2 Solution: ' . $this->solve($data, true));
+        $prenta->answer($this->solve($data, true), 2);
 
-        $io->writeln('Total time: ' . $overallTimer->stop());
-        return Command::SUCCESS;
-    }    
+        // Stop the timer
+        $time_done = $overallTimer->stop();
+        $prenta->time($time_done, 'Overall Time');
+    }
 
     protected function strpos_all($haystack, $needle) {
 

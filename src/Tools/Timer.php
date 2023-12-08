@@ -15,6 +15,11 @@ class Timer {
 
     }
 
+    public function reset() {
+        $this->startTime = null;
+        $this->endTime = null;
+        $this->checkpoints = [];
+    }
     public function start() {
         $this->startTime = microtime(true);
     }
