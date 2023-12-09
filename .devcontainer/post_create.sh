@@ -38,10 +38,6 @@ echo "deb http://ppa.launchpad.net/ondrej/php/ubuntu focal main" | tee /etc/apt/
 echo "deb-src http://ppa.launchpad.net/ondrej/php/ubuntu focal main" | tee -a /etc/apt/sources.list.d/php.list
 apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 4F4EA0AAE5267A6C
 
-# Install php-process
-echo -e "${BLUE}Installing php-process${NC}"
-apt-get update
-apt-get install php$PHP_VERSION-process
 
 # Include the .devcontainer/setup_gh_copilot_cli.sh script to install the GitHub CLI and GitHub Copilot CLI extension
 # It immediately exits and cancels the action if a GitHub CLI token is not found in the host system's ~/.config/gh/config.yml
