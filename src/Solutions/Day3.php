@@ -212,7 +212,7 @@ class Day3
     }
 
     protected function parse_input($data) {        
-        $data = preg_split('/\r\n|\r|\n/', file_get_contents($data));
+        $data = preg_split('/\r\n|\r|\n/', $data);
         for ($i = 0; $i < count($data); $i++) {
             $data[$i] = str_split(trim($data[$i]));
         }
