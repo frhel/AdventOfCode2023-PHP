@@ -45,6 +45,7 @@ class Day8
     protected function solve($data) {
         $utils = new Utils();
         [$part1, $part2] = [0, 0];
+        $count = 0;
     
         // Start solving part 1
         Prenta::print('-- Starting Part 1 --', 'light_yellow');
@@ -55,6 +56,7 @@ class Day8
         // Loop over the nodes array and process all the nodes that end in Z
         $shortest_paths = [];
         foreach ($data['nodes'] as $key => $node) {
+            $count++;
             if ($key[2] === 'A') {
                 $shortest_paths[] = $this->find_shortest_path($data['nodes'], $key, $data['instr'], "..Z");
             }
