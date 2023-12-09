@@ -9,55 +9,50 @@ namespace frhel\adventofcode2023php\Solutions;
 
 use frhel\adventofcode2023php\Tools\Timer;
 use frhel\adventofcode2023php\Tools\Prenta;
+use frhel\adventofcode2023php\Tools\Utils;
 
 
 class Day5
 {
 
-    function __construct(private int $day) {
-        $ex = 0;
-
-        // The test data is so small we may as well just load both files in anyways
-        $data_full = file_get_contents(__DIR__ . '/../../data/day_' . $day);
-        $data_example = file_get_contents(__DIR__ . '/../../data/day_' . $day . '.ex');
-
-        // Default to example data. Just comment out this line to use the real data.
+    function __construct(private int $day, $bench = false, $ex = 0) {
         // $ex = 1;
-        $data = $this->parse_input($ex === 1 ? $data_example : $data_full);
+        $data = $this->load_data($day, $ex);
+        if ($bench) return; // Don't run the actual solution if we're benchmarking
 
         $overallTimer = new Timer();
-
         // Solve both parts at the same time. See solve() docblock for more info
-        $solution = $this->solve($data);
-
-        // Print answers
+        $solution = $this->solve($data);        
+        Prenta::time($overallTimer->stop(), 'Overall Time');
+    
         Prenta::answer($solution[0], 1); // Part 1: 282277027
         Prenta::answer($solution[1], 2); // Part 2: 11554135
-        Prenta::time($overallTimer->stop(), 'Overall Time');
+
+        // Function to test needs to be static
+        Utils::bench(5, $data, 100); // 0 runs to turn off
+
     }
 
-
-    protected function solve($data) { 
+    public function solve($data) {
         $part1 = 0;
         $part2 = 0;
 
-        $maps = $data['maps'];        
+        $maps = $data['maps'];
+        $seeds = $data['seeds'];
 
         // Part 1        
-        $seeds = array_merge($data['seeds']);
+        $seeds = array_merge($seeds);
         foreach ($maps as $map) {
             $new_seeds = [];
             foreach ($seeds as $s) {
                 $isset = false;
                 foreach ($map as $mp) {
-                    if ($s >= $mp['src']['start'] && $s <= $mp['src']['end']) {
+                    if ($s >= $mp['start'] && $s <= $mp['end']) {
                         $isset = true;
                         $new_seeds[] = $s + $mp['diff'];
                     }
                 }
-                if (!$isset) {
-                    $new_seeds[] = $s;
-                }
+                if (!$isset) $new_seeds[] = $s;
             }
             $seeds = $new_seeds;
         }
@@ -65,26 +60,35 @@ class Day5
                 
         // Part 2
         $pairs = $this->generate_pairs($data['seeds']);
-        [$diff, $se, $ss] = [0, 0, 0];
         foreach ($maps as $map) {
             $new_pairs = [];
             while(count($pairs) > 0) {
                 $p = array_pop($pairs);
                 $last_count = count($new_pairs);
                 foreach ($map as $mp) {
-                    [$ss, $se, $diff] = [$mp['src']['start'], $mp['src']['end'], $mp['diff']];
-                    if ($p[0] >= $ss && $p[1] <= $se) {
-                        $new_pairs[] = [$p[0] + $diff, $p[1] + $diff];
-                    } else if ($p[0] <= $ss && $p[1] <= $se && $p[1] >= $ss) {
-                        $new_pairs[] = [$ss + $diff, $p[1] + $diff];
-                        $pairs[] = [$p[0], $ss - 1];
-                    } else if ($p[0] >= $ss && $p[1] >= $se && $p[0] <= $se) {
-                        $new_pairs[] = [$p[0] + $diff, $se + $diff];
-                        $pairs[] = [$se + 1, $p[1]];
-                    } else if ($p[0] <= $ss && $p[1] >= $se) {
-                        $new_pairs[] = [$ss + $diff, $se + $diff];
-                        $pairs[] = [$p[0], $ss - 1];
-                        $pairs[] = [$se + 1, $p[1]];
+                    $l = 2;
+                    $u = 2;
+                    if ($p[0] < $mp['start']) $l = 0;
+                    else if ($p[0] <= $mp['end']) $l = 1;
+                    if ($p[1] > $mp['end']) $u = 1;
+                    else if ($p[1] >= $mp['start']) $u = 0;
+                    switch ((int) ($l . $u)) {
+                        case 10:
+                            $new_pairs[] = [$p[0] + $mp['diff'], $p[1] + $mp['diff']];
+                            break;
+                        case 0:
+                            $new_pairs[] = [$mp['start'] + $mp['diff'], $p[1] + $mp['diff']];
+                            $pairs[] = [$p[0], $mp['start'] - 1];
+                            break;
+                        case 11:
+                            $new_pairs[] = [$p[0] + $mp['diff'], $mp['end'] + $mp['diff']];
+                            $pairs[] = [$mp['end'] + 1, $p[1]];
+                            break;
+                        case 1:
+                            $new_pairs[] = [$mp['start'] + $mp['diff'], $mp['end'] + $mp['diff']];
+                            $pairs[] = [$p[0], $mp['start'] - 1];
+                            $pairs[] = [$mp['end'] + 1, $p[1]];
+                            break;
                     }
                 }
                 if ($last_count === count($new_pairs)) {
@@ -132,14 +136,23 @@ class Day5
             }
             $map = explode(' ', $line);
 
-            $processed['src'] = ['start' => $map[1], 'end' => (int) $map[1] + $map[2] - 1];
-            $processed['diff'] = $map[0] - $processed['src']['start'];
+            $processed['start'] = $map[1];
+            $processed['end'] = (int) $map[1] + $map[2] - 1;
+            $processed['diff'] = $map[0] - $map[1];
             
             $current_map[] = $processed;
         }
         $maps[] = $current_map;
 
         return ['seeds' => $seeds, 'maps' => $maps];
+    }
+
+    public function load_data($day, $ex = 0) {
+        // The test data is so small we may as well just load both files in anyways
+        $data_full = file_get_contents(__DIR__ . '/../../data/day_' . $day);
+        $data_example = file_get_contents(__DIR__ . '/../../data/day_' . $day . '.ex');
+
+        return $this->parse_input($ex === 1 ? $data_example : $data_full);
     }
 
 }

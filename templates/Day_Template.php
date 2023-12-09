@@ -22,25 +22,15 @@ class Day
 
         // $ex = 1;
         $data = $this->parse_input($ex === 1 ? $data_example : $data_full);
-        
-        // ====================================================================== //
-        // ============================ Start Solving =========================== //
-        // ====================================================================== //
-        // Start the timer
+
         $overallTimer = new Timer();
 
         // Solve both parts at the same time. See solve() docblock for more info
         $solution = $this->solve($data);
 
-        // Right answer: 
-        Prenta::answer($solution[0], 1);
-
-        // Right answer: 
-        Prenta::answer($solution[1], 2);
- 
-        // Stop the timer
-        $time_done = $overallTimer->stop();
-        Prenta::time($time_done, 'Overall Time');
+        Prenta::answer($solution[0], 1); // Part 1: 
+        Prenta::answer($solution[1], 2); // Part 2: 
+        Prenta::time($overallTimer->stop(), 'Overall Time');
     }
     
 
@@ -59,6 +49,12 @@ class Day
         return [$part1, $part2];
     }
 
+    /**
+     * Parses the input data into a usable format
+     * 
+     * @param string $data The input data
+     * @return array The parsed data
+     */
     protected function parse_input($data) {        
         $data = preg_split('/\r\n|\r|\n/', $data);
 

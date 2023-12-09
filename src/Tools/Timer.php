@@ -56,6 +56,26 @@ class Timer {
     public function getCheckpoint($index) {
         return $this->checkpoints[$index];
     }
+    public function avg_time() {
+        $total = array_sum($this->calc_elapsed_times($this->checkpoints));
+        return $this->formatTime($total / count($this->checkpoints));
+    }
+
+    public function median_time() {
+        $times = $this->calc_elapsed_times($this->checkpoints);
+        return $this->formatTime($times[~~(count($times)) / 2]);
+
+    }
+
+    private function calc_elapsed_times($arr) {
+        $values = [];
+        $last = $this->startTime;
+        foreach ($this->checkpoints as $checkpoint) {
+            $values[] = $checkpoint - $last;
+            $last = $checkpoint;
+        }
+        return $values;
+    }
 
 
     public function formatTime(String $time) {

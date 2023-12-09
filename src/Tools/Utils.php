@@ -2,7 +2,24 @@
 
 namespace frhel\adventofcode2023php\Tools;
 
+use frhel\adventofcode2023php\Tools\Timer;
+
 class Utils {
+    
+    static public function bench($day, $data, $times) {
+        if ($times === 0) return;
+        $day_path = '\\frhel\\adventofcode2023php\\Solutions\\Day' . $day;
+        $day = new $day_path($day, true); // true to stop after loading data
+        $timer = new Timer();
+        $timer->start();
+        for ($i = 1; $i <= $times; $i++) {
+            $day->solve($data);
+            $timer->checkpoint();
+        }
+        Prenta::time($timer->avg_time(), 'Average time of ' . $times . ' runs');
+        Prenta::time($timer->median_time(), 'Median time of ' . $times . ' runs');
+        Prenta::time($timer->stop(), 'Total time of ' . $times . ' runs');
+    }
     /**
      * Calculates the Least Common Multiple of all the numbers in the array
      * @depends gcd
