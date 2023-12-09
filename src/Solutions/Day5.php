@@ -7,11 +7,7 @@ declare(strict_types=1);
 
 namespace frhel\adventofcode2023php\Solutions;
 
-use Amp\Future;
-use Amp\Parallel\Worker;
-
 use frhel\adventofcode2023php\Tools\Timer;
-use frhel\adventofcode2023php\Tools\RunTask;
 use frhel\adventofcode2023php\Tools\Prenta;
 
 
@@ -19,38 +15,25 @@ class Day5
 {
 
     function __construct(private int $day) {
-        $prenta = new Prenta();
         $ex = 0;
 
         // The test data is so small we may as well just load both files in anyways
         $data_full = file_get_contents(__DIR__ . '/../../data/day_' . $day);
         $data_example = file_get_contents(__DIR__ . '/../../data/day_' . $day . '.ex');
 
+        // Default to example data. Just comment out this line to use the real data.
         // $ex = 1;
         $data = $this->parse_input($ex === 1 ? $data_example : $data_full);
 
-        // ====================================================================== //
-        // ============================ Start Solving =========================== //
-        // ====================================================================== //
-        // Default to example data. Just comment out this line to use the real data.
-        $this->ex = 1;
-        $data = $this->parse_input($this->ex === 1 ? $data_example : $data_full);
-
-        // Start the timer
         $overallTimer = new Timer();
 
         // Solve both parts at the same time. See solve() docblock for more info
         $solution = $this->solve($data);
 
-        // Right answer: 282277027
-        $prenta->answer($solution[0], 1);
-
-        // Right answer: 11554135
-        $prenta->answer($solution[1], 2);
- 
-        // Stop the timer
-        $time_done = $overallTimer->stop();
-        $prenta->time($time_done, 'Overall Time');
+        // Print answers
+        Prenta::answer($solution[0], 1); // Part 1: 282277027
+        Prenta::answer($solution[1], 2); // Part 2: 11554135
+        Prenta::time($overallTimer->stop(), 'Overall Time');
     }
 
 
@@ -58,30 +41,67 @@ class Day5
         $part1 = 0;
         $part2 = 0;
 
-        $seeds = $data['seeds'];
-        $maps = $data['maps'];
+        $maps = $data['maps'];        
 
-        $pairs = array_map(fn($x) => [(int)$x, (int) $x], $seeds);
-        print_r($pairs);
-
+        // Part 1        
+        $seeds = array_merge($data['seeds']);
+        foreach ($maps as $map) {
+            $new_seeds = [];
+            foreach ($seeds as $s) {
+                $isset = false;
+                foreach ($map as $mp) {
+                    if ($s >= $mp['src']['start'] && $s <= $mp['src']['end']) {
+                        $isset = true;
+                        $new_seeds[] = $s + $mp['diff'];
+                    }
+                }
+                if (!$isset) {
+                    $new_seeds[] = $s;
+                }
+            }
+            $seeds = $new_seeds;
+        }
+        $part1 = min($seeds);
+                
+        // Part 2
+        $pairs = $this->generate_pairs($data['seeds']);
+        [$diff, $se, $ss] = [0, 0, 0];
         foreach ($maps as $map) {
             $new_pairs = [];
-            foreach ($map as $pair) {
-                
+            while(count($pairs) > 0) {
+                $p = array_pop($pairs);
+                $last_count = count($new_pairs);
+                foreach ($map as $mp) {
+                    [$ss, $se, $diff] = [$mp['src']['start'], $mp['src']['end'], $mp['diff']];
+                    if ($p[0] >= $ss && $p[1] <= $se) {
+                        $new_pairs[] = [$p[0] + $diff, $p[1] + $diff];
+                    } else if ($p[0] <= $ss && $p[1] <= $se && $p[1] >= $ss) {
+                        $new_pairs[] = [$ss + $diff, $p[1] + $diff];
+                        $pairs[] = [$p[0], $ss - 1];
+                    } else if ($p[0] >= $ss && $p[1] >= $se && $p[0] <= $se) {
+                        $new_pairs[] = [$p[0] + $diff, $se + $diff];
+                        $pairs[] = [$se + 1, $p[1]];
+                    } else if ($p[0] <= $ss && $p[1] >= $se) {
+                        $new_pairs[] = [$ss + $diff, $se + $diff];
+                        $pairs[] = [$p[0], $ss - 1];
+                        $pairs[] = [$se + 1, $p[1]];
+                    }
+                }
+                if ($last_count === count($new_pairs)) {
+                    $new_pairs[] = $p;
+                }
             }
+            $pairs = $new_pairs;
         }
-        
-        $pairs = $this->generate_pairs($seeds);
-        print_r($pairs);
+        $part2 = min($pairs)[0];
 
-        print_r($maps);
         return [$part1, $part2];
     }
 
     protected function generate_pairs($seeds) {
         $ranges = [];
         for ($i = 0; $i < count($seeds); $i++) {
-            $ranges[] = [$seeds[$i], $seeds[$i] + $seeds[$i + 1]];
+            $ranges[] = [$seeds[$i], $seeds[$i] + $seeds[$i + 1] -1];
             $i++;            
         }
         
@@ -110,12 +130,14 @@ class Day5
                 $current_map = [];
                 continue;
             }
-            $current_map[] = explode(' ', $line);
+            $map = explode(' ', $line);
 
-            $processed['dest'] = $current_map[0][0] + $current_map[0][2];
-            $processed['src'] = $current_map[0][0];
+            $processed['src'] = ['start' => $map[1], 'end' => (int) $map[1] + $map[2] - 1];
+            $processed['diff'] = $map[0] - $processed['src']['start'];
+            
+            $current_map[] = $processed;
         }
-        $maps[] = $processed;
+        $maps[] = $current_map;
 
         return ['seeds' => $seeds, 'maps' => $maps];
     }
