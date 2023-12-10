@@ -2,6 +2,8 @@
 // ----------------------------------------------------------------------------
 // Problem description: https://adventofcode.com/2023/day/6
 // Solution by: https://github.com/frhel (Fry)
+// Part 1: 25200
+// Part 2: 36992486
 // ----------------------------------------------------------------------------
 declare(strict_types=1);
 
@@ -10,39 +12,11 @@ namespace frhel\adventofcode2023php\Solutions;
 use frhel\adventofcode2023php\Tools\Timer;
 use frhel\adventofcode2023php\Tools\Prenta;
 
-class Day6
+class Day6 extends Day
 {
-
-    function __construct(private int $day) {
-        $prenta = new Prenta();
-        $ex = 0;
-
-        // The test data is so small we may as well just load both files in anyways
-        $data_full = file_get_contents(__DIR__ . '/../../data/day_' . $day);
-        $data_example = file_get_contents(__DIR__ . '/../../data/day_' . $day . '.ex');
-
-        // $ex = 1;
-        $data = $this->parse_input($ex === 1 ? $data_example : $data_full);
-        
-        // ====================================================================== //
-        // ============================ Start Solving =========================== //
-        // ====================================================================== //
-        // Start the timer
-        $overallTimer = new Timer();
-
-        // Solve both parts at the same time. See solve() docblock for more info
-        $solution = $this->solve($data);
-
-        // Right answer: 25200
-        $prenta->answer($solution[0], 1);
-
-        // Right answer: 36992486
-        $prenta->answer($solution[1], 2);
- 
-        // Stop the timer
-        $time_done = $overallTimer->stop();
-        $prenta->time($time_done, 'Overall Time');
-    }
+    function __construct(private int $day, $bench = 100, $ex = 0) {     
+        parent::__construct($day, $bench, $ex);
+    }    
 
     /**
      * Solves both parts of the problem at the same time
@@ -53,7 +27,7 @@ class Day6
      * Part 1: The sum of all points for all cards
      * Part 2: The total number of cards and card copies in the game
      */
-    protected function solve($data) {
+    public function solve($data) {
         $win_multiplier = 1;
         for ($i = 0; $i < count($data['time']); $i++) {            
             $win_count = $this->get_win_count($data['time'][$i], $data['distance'][$i]);

@@ -5,12 +5,13 @@ namespace frhel\adventofcode2023php\Tools;
 class Prenta {
 
     protected static $bashColors = [
-        'light_blue' => "\033[1;34m",
-        'light_green' => "\033[1;32m",
-        'light_cyan' => "\033[1;36m",
-        'light_red' => "\033[1;31m",
-        'light_purple' => "\033[1;35m",
-        'light_yellow' => "\033[1;33m",
+        'blue' => "\033[1;34m",
+        'green' => "\033[1;32m",
+        'cyan' => "\033[1;36m",
+        'red' => "\033[1;31m",
+        'purple' => "\033[1;35m",
+        'yellow' => "\033[1;33m",
+        'white' => "\033[1;37m",
         'normal' => "\033[0m"
     ];
 
@@ -19,17 +20,18 @@ class Prenta {
 
     /**
      * Prints a message to the console
+     * Available colours are: blue, green, cyan, red, purple, yellow, normal
      *
      * @param string $message Message to print
      * @param string $color Colour to print the message in
      * @return void
      * 
-     * @example 1 print('Hello World', 'light_blue');
+     * @example 1 print('Hello World', 'blue');
      * 
      */
-    static public function print($message, $color = 'normal') {
+    static public function print($message, $color = 'white') {
         $c = self::$bashColors;
-        printf('%s %s %s' . PHP_EOL, $c[$color], $message, $c['normal']);
+        printf('%s %s %s' . PHP_EOL, $c[$color], $message, $c['white']);
     }
 
     /**
@@ -47,7 +49,7 @@ class Prenta {
     static public function freq_interval($count, $frequency , $label, $value) {
         $c = self::$bashColors;
         if ($frequency === 0 || $count % $frequency === 0) 
-            printf('%s %s: %s %s %s' . PHP_EOL, $c['light_cyan'], $label, $c['light_yellow'], $value, $c['normal']);
+            printf('%s %s: %s %s %s' . PHP_EOL, $c['white'], $label, $c['yellow'], $value, $c['normal']);
     }
 
     /**
@@ -63,7 +65,7 @@ class Prenta {
     static public function answer($solution, $part) {
         $c = self::$bashColors;
         // Echo the colours so the escape characters go too
-        printf('%s Part %s: %s %s %s' . PHP_EOL, $c['light_purple'], $part, $c['light_cyan'], $solution, $c['normal']);
+        printf('%s Part %s: %s %s %s' . PHP_EOL, $c['white'], $part, $c['cyan'], $solution, $c['normal']);
     }
 
     /**
@@ -79,6 +81,6 @@ class Prenta {
      */
     static public function time($time, $message) {
         $c = self::$bashColors;
-        printf('%s %s: %s %s %s' . PHP_EOL, $c['light_cyan'], $message, $c['light_yellow'], $time, $c['normal']);
+        printf('%s %s: %s %s %s' . PHP_EOL, $c['purple'], $message, $c['yellow'], $time, $c['normal']);
     }
 }

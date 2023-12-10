@@ -12,29 +12,11 @@ use frhel\adventofcode2023php\Tools\Prenta;
 use frhel\adventofcode2023php\Tools\Utils;
 
 
-class Day8
+class Day8 extends Day
 {
-    function __construct(private int $day) {
-        $ex = 0;
-
-        // The test data is so small we may as well just load both files in anyways
-        $data_full = file_get_contents(__DIR__ . '/../../data/day_' . $day);
-        $data_example = file_get_contents(__DIR__ . '/../../data/day_' . $day . '.ex');
-
-        // $ex = 1;
-        $data = $this->parse_input($ex === 1 ? $data_example : $data_full);
-
-        $overallTimer = new Timer();
-        // Solve both parts at the same time. See solve() docblock for more info
-        $solution = $this->solve($data);
-
-        // Right answers: [15871, 11283670395017]
-        Prenta::answer($solution[0], 1);
-        Prenta::answer($solution[1], 2);
- 
-        Prenta::time($overallTimer->stop(), 'Overall Time');
-    }
-    
+    function __construct(private int $day, $bench = 100, $ex = 0) {     
+        parent::__construct($day, $bench, $ex);
+    }    
 
     /**
      * Solves the problem
@@ -42,17 +24,15 @@ class Day8
      * @param array $data The data to solve
      * @return array Solution tuple in the form of [part1, part2]
      */
-    protected function solve($data) {
+    public function solve($data) {
         $utils = new Utils();
         [$part1, $part2] = [0, 0];
         $count = 0;
     
         // Start solving part 1
-        Prenta::print('-- Starting Part 1 --', 'light_yellow');
         $part1 = $this->find_shortest_path($data['nodes'], 'AAA', $data['instr'], 'ZZZ');
 
         // Start solving part 2
-        Prenta::print('-- Starting Part 2 --', 'light_yellow');
         // Loop over the nodes array and process all the nodes that end in Z
         $shortest_paths = [];
         foreach ($data['nodes'] as $key => $node) {

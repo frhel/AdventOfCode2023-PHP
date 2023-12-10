@@ -2,6 +2,8 @@
 // ----------------------------------------------------------------------------
 // Problem description: https://adventofcode.com/2023/day/2
 // Solution by: https://github.com/frhel (Fry)
+// Part 1: 2237
+// Part 2: 66681
 // ----------------------------------------------------------------------------
 declare(strict_types=1);
 
@@ -12,43 +14,20 @@ use frhel\adventofcode2023php\Tools\Prenta;
 
 
 
-class Day2
+class Day2 extends Day
 {
     protected $colors;
-
-    function __construct(private int $day) {
+    function __construct(private int $day, $bench = 100, $ex = 0) {  
         $prenta = new Prenta();
         $this->colors = [
             "red" => "12",
             "green" => "13",        
             "blue" => "14",
-        ];
+        ];   
+        parent::__construct($day, $bench, $ex);
+    }        
 
-        $overallTimer = new Timer();
-
-        
-        // The test data is so small we may as well just load both files in anyways
-        $data_full = file_get_contents(__DIR__ . '/../../data/day_' . $day);
-        $data_example = file_get_contents(__DIR__ . '/../../data/day_' . $day . '.ex');
-        $games = $this->parse_input($data_full);  
-
-        // Solve once for both parts so we don't have to loop twice
-        $solution = $this->solve($games);
-
-        // Right answer: 2237
-        $prenta->answer($solution["viable_games"], 1);
-
-        // Right answer: 66681
-        $prenta->answer($solution["game_powers"], 2);
-
-        // Stop the timer
-        $time_done = $overallTimer->stop();
-        $prenta->time($time_done, 'Overall Time');
-    }
-
-    
-
-    protected function solve($games) {
+    public function solve($games) {
         $viable_games = [];
         $game_powers = [];
 
@@ -61,10 +40,7 @@ class Day2
             $game_powers[] = $max_color_vals["red"] * $max_color_vals["green"] * $max_color_vals["blue"];            
         }
         
-        return [
-            "game_powers" => array_sum($game_powers),
-            "viable_games" => array_sum($viable_games),
-        ];
+        return [array_sum($viable_games), array_sum($game_powers)];
     }
 
     protected function is_viable($game) {

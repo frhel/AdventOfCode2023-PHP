@@ -21,7 +21,7 @@ if [ ! -f src/Solutions/Day${DAY}.php ]; then
 
     # 1. Replace the class name
     # 4. Update the link to the problem description
-    sed -i "s/class Day/class Day${DAY}/g" src/Solutions/Day${DAY}.php
+    sed -i "s/class Day_Template/class Day${DAY}/g" src/Solutions/Day${DAY}.php
     sed -i "s/Problem description: https:\/\/adventofcode.com\/2023\/day\//Problem description: https:\/\/adventofcode.com\/2023\/day\/${DAY}/g" src/Solutions/Day${DAY}.php
 
     echo -e "Created new file: ${BLUE}src/Solutions/Day${DAY}.php${NC}"
@@ -36,5 +36,3 @@ if [ ! -f data/day_${DAY} ]; then
 fi
 
 echo -e "${GREEN}Done creating new day: ${RED}Day ${DAY}${NC}"
-
-

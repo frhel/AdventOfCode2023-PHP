@@ -3,13 +3,15 @@
 namespace frhel\adventofcode2023php\Tools;
 
 use frhel\adventofcode2023php\Tools\Timer;
+use frhel\adventofcode2023php\Tools\Prenta;
 
 class Utils {
     
     static public function bench($day, $data, $times) {
         if ($times === 0) return;
+        Prenta::print('Running benchmark. ' . $times . ' rounds', 'yellow');
         $day_path = '\\frhel\\adventofcode2023php\\Solutions\\Day' . $day;
-        $day = new $day_path($day, true); // true to stop after loading data
+        $day = new $day_path($day, -1); // true to stop after loading data
         $timer = new Timer();
         $timer->start();
         for ($i = 1; $i <= $times; $i++) {

@@ -1,6 +1,6 @@
 <?php
 // ----------------------------------------------------------------------------
-// Problem description: https://adventofcode.com/2023/day/
+// Problem description: https://adventofcode.com/2023/day/10
 // Solution by: https://github.com/frhel (Fry)
 // ----------------------------------------------------------------------------
 declare(strict_types=1);
@@ -11,7 +11,7 @@ use frhel\adventofcode2023php\Tools\Timer;
 use frhel\adventofcode2023php\Tools\Prenta;
 use frhel\adventofcode2023php\Tools\Utils;
 
-class Day_Template extends Day 
+class Day10 extends Day 
 {
     function __construct(private int $day, $bench = 0, $ex = 0) {
         parent::__construct($day, $bench, $ex);

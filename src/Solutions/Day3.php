@@ -2,6 +2,8 @@
 // ----------------------------------------------------------------------------
 // Problem description: https://adventofcode.com/2023/day/3
 // Solution by: https://github.com/frhel (Fry)
+// Part 1: 512794
+// Part 2: 67779080
 // ----------------------------------------------------------------------------
 declare(strict_types=1);
 
@@ -11,12 +13,10 @@ use frhel\adventofcode2023php\Tools\Timer;
 use frhel\adventofcode2023php\Tools\Prenta;
 
 
-class Day3
+class Day3 extends Day
 {
     protected $dirs;
-
-    function __construct(private int $day) {
-        // Define the 8 directions around a symbol
+    function __construct(private int $day, $bench = 100, $ex = 0) {  // Define the 8 directions around a symbol
         // We can use these by adding together the x and y coordinates of a direction
         // with the x and y coordinates of a grid position to get the coordinates of
         // the next position in that direction.
@@ -33,52 +33,22 @@ class Day3
             'W' => [-1, 0],
             'NW' => [-1, 1],
         ];
-        
-        $prenta = new Prenta();
-        $ex = 0;
 
-        // The test data is so small we may as well just load both files in anyways
-        $data_full = file_get_contents(__DIR__ . '/../../data/day_' . $day);
-        $data_example = file_get_contents(__DIR__ . '/../../data/day_' . $day . '.ex');
+        parent::__construct($day, $bench, $ex);
 
-        // $ex = 1;
-        $data = $this->parse_input($ex === 1 ? $data_example : $data_full);
-        
-        // ====================================================================== //
-        // ============================ Start Solving =========================== //
-        // ====================================================================== //
-        // Start the timer
-        $overallTimer = new Timer();
-
-        define('GRID', $data); // Define the grid as a constant so we can use it in the functions below
-        define('GRID_WIDTH', count($data[0])); // Define the width of the grid as a constant so we can use it in the functions below
-        define('GRID_HEIGHT', count($data)); // Define the height of the grid as a constant so we can use it in the functions below
-
-        // Do both parts in one pass so we don't have to process the data twice
-        // Using the GRID constant and the GRID_WIDTH and GRID_HEIGHT constants
-        // defined above so we don't have to pass them as parameters.
-        $solution = $this->solve();
-
-        // Right answer: 512794
-        $prenta->answer($solution[0], 1);
-
-        // Right answer: 67779080
-        $prenta->answer($solution[1], 2);
-
-        $prenta->time($overallTimer->stop(), 'Overall Time');
     }
 
 
-    protected function solve() {
+    public function solve($data) {
         $parts = []; // Collection of all the valid part numbers for part 1
         $gears = []; // Collection of all the gear values for part 2
 
         // Grab all the symbols and part numbers from the grid
-        [$symbols, $part_nrs] = $this->get_symbols_and_parts();
+        [$symbols, $part_nrs] = $this->get_symbols_and_parts($data);
 
         // Go through each symbol, find the adjacent numbers from the part number collection
         foreach ($symbols as $symbol) {
-            $numbers = $this->find_adjacent_numbers($symbol, $part_nrs);
+            $numbers = $this->find_adjacent_numbers($symbol, $part_nrs, $data);
             $number_count = count($numbers);
             if ($number_count < 1) { continue; } // No numbers found, skip symbol
 
@@ -98,26 +68,26 @@ class Day3
         return [array_sum($parts), array_sum($gears)];
     }
 
-    protected function get_symbols_and_parts() {
+    protected function get_symbols_and_parts($data) {
         $symbols = []; // Collect all the symbols
         $part_nrs = []; // Collect all the part numbers
-        for ($y = 0; $y < GRID_WIDTH; $y++) {
-            $line = GRID[$y];
+        for ($y = 0; $y < count($data[0]); $y++) {
+            $line = $data[$y];
 
-            for ($x = 0; $x < GRID_WIDTH; $x++) {
+            for ($x = 0; $x < count($data[0]); $x++) {
                 $glyph = $line[$x]; // Process each glyph
                 if ($glyph === '.') { continue; } // . is empty space, skip it
                 
                 // if glyph is a number, find the rest of the number and add it to part_nrs
                 if (is_numeric($glyph)) {
                     // Save the number along with the start and end coordinates
-                    [$number, $start, $end] = $this->get_whole_number($x, $y);       
+                    [$number, $start, $end] = $this->get_whole_number($x, $y, $data);       
                     $x = $end['x']; // continue from the end coordinate of the number so we don't count any digits twice
                     if ($number === null) { continue; } // If the number is not valid(no adjacent symbols), skip it
                     $part_nrs[] = ["part_nr" => $number, "start" => $start, "end" => $end];
                 } else {
                     // If the glyph is not a number or empty space, add it to the symbols collection along with its coordinates
-                    if (!$this->has_grid_neighbour('symbol', $x, $y)) { continue; } // If the symbol is not adjacent to a number, skip it
+                    if (!$this->has_grid_neighbour('symbol', $x, $y, $data)) { continue; } // If the symbol is not adjacent to a number, skip it
                     $symbols[] = ["symbol" => $glyph, "x" => $x, "y" => $y];
                 }
             }
@@ -126,7 +96,7 @@ class Day3
         return [$symbols, $part_nrs];
     }
 
-    protected function get_whole_number($x, $y) {
+    protected function get_whole_number($x, $y, $data) {
         $number = ''; // Collect the number to a string
         $start = ["x" => $x, "y" => $y]; // Save the start coordinates
         $has_neighbour = false;
@@ -134,12 +104,12 @@ class Day3
         // Break the loop if we reach the end of the grid or if the next glyph is not a number
         do {
             // If the current glyph is a number, check if it has a grid neighbour that is a symbol
-            if (!$has_neighbour && $this->has_grid_neighbour('nr', $x, $y)) { $has_neighbour = true; }
-            $number .= GRID[$y][$x]; // Add the current glyph to the number
+            if (!$has_neighbour && $this->has_grid_neighbour('nr', $x, $y, $data)) { $has_neighbour = true; }
+            $number .= $data[$y][$x]; // Add the current glyph to the number
             $x++;
         } while (            
-            $x < GRID_WIDTH
-            && is_numeric(GRID[$y][$x])
+            $x < count($data[0])
+            && is_numeric($data[$y][$x])
         );
         // Save the end coordinates of the number
         // Using $x - 1 because we want the last coordinate of the number, not the first coordinate of the next glyph
@@ -153,7 +123,7 @@ class Day3
         return [null, $start, $end];
     }
 
-    protected function find_adjacent_numbers($symbol, $part_nrs) {
+    protected function find_adjacent_numbers($symbol, $part_nrs, $data) {
         $numbers = []; // Collect the found numbers
         foreach ($this->dirs as $dir_coords) {
             // Here we check the 8 directions around the current symbol that are
@@ -163,7 +133,7 @@ class Day3
  
             // If the coordinates are out of bounds, we skip that direction.
             if ($x < 0 || $y < 0) { continue; }
-            if ($x >= GRID_WIDTH || $y >= GRID_HEIGHT) { continue; }            
+            if ($x >= count($data[0]) || $y >= count($data)) { continue; }            
             
             foreach ($part_nrs as $i => $part) {
                 // If the number we are checking is below the current symbol, we skip it
@@ -190,20 +160,20 @@ class Day3
         return $numbers;
     }
 
-    protected function has_grid_neighbour($type, $x, $y) {
+    protected function has_grid_neighbour($type, $x, $y, $data) {
         foreach ($this->dirs as $dir => $dir_coords) {
             $temp_x = $x + $dir_coords[0];
             $temp_y = $y + $dir_coords[1];
 
 
             if ($temp_x < 0 || $temp_y < 0) { continue; }
-            if ($temp_x >= GRID_WIDTH || $temp_y >= GRID_HEIGHT) { continue; }
+            if ($temp_x >= count($data[0]) || $temp_y >= count($data)) { continue; }
 
-            if (GRID[$temp_y][$temp_x] === '.') { continue; }
+            if ($data[$temp_y][$temp_x] === '.') { continue; }
 
             if (
-                    ($type === 'nr' && !is_numeric(GRID[$temp_y][$temp_x]))
-                ||  ($type === 'symbol' && is_numeric(GRID[$temp_y][$temp_x]))
+                    ($type === 'nr' && !is_numeric($data[$temp_y][$temp_x]))
+                ||  ($type === 'symbol' && is_numeric($data[$temp_y][$temp_x]))
             ) {
                 return true; 
             }

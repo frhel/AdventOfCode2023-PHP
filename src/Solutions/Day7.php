@@ -2,6 +2,8 @@
 // ----------------------------------------------------------------------------
 // Problem description: https://adventofcode.com/2023/day/7
 // Solution by: https://github.com/frhel (Fry)
+// Part 1: 247823654
+// Part 2: 245461700
 // ----------------------------------------------------------------------------
 declare(strict_types=1);
 
@@ -10,46 +12,18 @@ namespace frhel\adventofcode2023php\Solutions;
 use frhel\adventofcode2023php\Tools\Timer;
 use frhel\adventofcode2023php\Tools\Prenta;
 
-class Day7
+class Day7 extends Day
 {
     protected $hand_strengths;
     protected $card_strengths;
-
-    public function __construct(private int $day) {
-        $ex = 0;
+    function __construct(private int $day, $bench = 100, $ex = 0) {     
         $this->hand_strengths = [51 => 7, 42 => 6, 32 => 5, 33 => 4, 23 => 3, 24 => 2, 15 => 1];
         $this->card_strengths = [
             '2' => 1, '3' => 2, '4' => 3, '5' => 4, '6' => 5, '7' => 6, '8' => 7, '9' => 8, 
             'T' => 9, 'J' => 10, 'Q' => 11, 'K' => 12, 'A' => 13
         ];
-
-        // ====================================================================== //
-        // ============================ Start Solving =========================== //
-        // ====================================================================== // 
-        $prenta = new Prenta();
-
-        // The test data is so small we may as well just load both files in anyways
-        $data_full = file_get_contents(__DIR__ . '/../../data/day_' . $day);
-        $data_example = file_get_contents(__DIR__ . '/../../data/day_' . $day . '.ex');
-       
-        // $ex = 1; // Default to example data. Just comment out this line to use the real data.
-        $data = $this->parse_input($ex === 1 ? $data_example : $data_full);
-
-        // Start the timer
-        $overallTimer = new Timer();
-
-        $solution = $this->solve($data);
-        
-        // Stop the timer
-        $time_done = $overallTimer->stop();        
-        $prenta->time($time_done, 'Overall Time');
-
-        // Right answer:247823654
-        $prenta->answer($solution[0], 1);
-
-        // Right answer: 245461700
-        $prenta->answer($solution[1], 2); 
-    }
+        parent::__construct($day, $bench, $ex);
+    }    
 
     /**
      * Solves the problem
@@ -57,7 +31,7 @@ class Day7
      * @param array $data The data to solve
      * @return array The solution to the problem in the form of [part1, part2]
      */
-    protected function solve($data) {
+    public function solve($data) {
         $hands = $data;
 
         $joker = false;
@@ -156,7 +130,7 @@ class Day7
             $b_add = 0;
             if ($a['strength'] === $b['strength']) {
                 // Find the highest card starting from the left
-                [$a_add, $b_add] = $this->find_stronger_hand($a, $b, $joker);
+                [$a_add, $b_add] = $this->find_stronger_hand($a, $b);
             }
 
             // Since the X_add values are initialized to 0, we can just add them to the strength
@@ -180,6 +154,9 @@ class Day7
 
         $a_cards = $a['cards'];
         $b_cards = $b['cards'];
+
+        $a_add = 0;
+        $b_add = 0;
 
         $i = 0;
         while ($i < 5) {

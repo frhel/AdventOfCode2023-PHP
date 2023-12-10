@@ -2,6 +2,8 @@
 // ----------------------------------------------------------------------------
 // Problem description: https://adventofcode.com/2023/day/5
 // Solution by: https://github.com/frhel (Fry)
+// Part 1: 282277027
+// Part 2: 11554135
 // ----------------------------------------------------------------------------
 declare(strict_types=1);
 
@@ -12,25 +14,11 @@ use frhel\adventofcode2023php\Tools\Prenta;
 use frhel\adventofcode2023php\Tools\Utils;
 
 
-class Day5
+class Day5 extends Day
 {
 
-    function __construct(private int $day, $bench = false, $ex = 0) {
-        // $ex = 1;
-        $data = $this->load_data($day, $ex);
-        if ($bench) return; // Don't run the actual solution if we're benchmarking
-
-        $overallTimer = new Timer();
-        // Solve both parts at the same time. See solve() docblock for more info
-        $solution = $this->solve($data);        
-        Prenta::time($overallTimer->stop(), 'Overall Time');
-    
-        Prenta::answer($solution[0], 1); // Part 1: 282277027
-        Prenta::answer($solution[1], 2); // Part 2: 11554135
-
-        // Function to test needs to be static
-        Utils::bench(5, $data, 100); // 0 runs to turn off
-
+    function __construct(private int $day, $bench = 0, $ex = 0) {
+        parent::__construct($day, $bench, $ex);
     }
 
     public function solve($data) {
@@ -66,12 +54,9 @@ class Day5
                 $p = array_pop($pairs);
                 $last_count = count($new_pairs);
                 foreach ($map as $mp) {
-                    $l = 2;
-                    $u = 2;
-                    if ($p[0] < $mp['start']) $l = 0;
-                    else if ($p[0] <= $mp['end']) $l = 1;
-                    if ($p[1] > $mp['end']) $u = 1;
-                    else if ($p[1] >= $mp['start']) $u = 0;
+                    $l = 2; $u = 2;
+                    if ($p[0] <= $mp['end']) $l = $p[0] < $mp['start'] ? 0 : 1;
+                    if ($p[1] >= $mp['start']) $u = $p[1] > $mp['end'] ? 1 : 0;
                     switch ((int) ($l . $u)) {
                         case 10:
                             $new_pairs[] = [$p[0] + $mp['diff'], $p[1] + $mp['diff']];
@@ -99,6 +84,7 @@ class Day5
         }
         $part2 = min($pairs)[0];
 
+        //return ['Redacted', 'Redacted'];
         return [$part1, $part2];
     }
 
@@ -145,14 +131,6 @@ class Day5
         $maps[] = $current_map;
 
         return ['seeds' => $seeds, 'maps' => $maps];
-    }
-
-    public function load_data($day, $ex = 0) {
-        // The test data is so small we may as well just load both files in anyways
-        $data_full = file_get_contents(__DIR__ . '/../../data/day_' . $day);
-        $data_example = file_get_contents(__DIR__ . '/../../data/day_' . $day . '.ex');
-
-        return $this->parse_input($ex === 1 ? $data_example : $data_full);
     }
 
 }
