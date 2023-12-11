@@ -14,6 +14,7 @@ use frhel\adventofcode2023php\Tools\Utils;
 class Day_Template extends Day 
 {
     function __construct(private int $day, $bench = 0, $ex = 0) {
+        $ex = 1;
         parent::__construct($day, $bench, $ex);
     }
     

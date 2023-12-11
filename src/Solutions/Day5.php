@@ -17,7 +17,7 @@ use frhel\adventofcode2023php\Tools\Utils;
 class Day5 extends Day
 {
 
-    function __construct(private int $day, $bench = 0, $ex = 0) {
+    function __construct(private int $day, $bench = 10, $ex = 0) {
         parent::__construct($day, $bench, $ex);
     }
 
