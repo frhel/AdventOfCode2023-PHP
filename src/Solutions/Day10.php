@@ -3,7 +3,7 @@
 // Problem description: https://adventofcode.com/2023/day/10
 // Solution by: https://github.com/frhel (Fry)
 // Part 1: 6831
-// Part 2: 
+// Part 2: 305
 // ----------------------------------------------------------------------------
 declare(strict_types=1);
 

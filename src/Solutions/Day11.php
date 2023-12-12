@@ -26,7 +26,9 @@ class Day11 extends Day
      * @param array $data The data to solve
      * @return array The solution to the problem in the form of [part1, part2]
      */
-    public function solve($data) {
+    public function solve($data) {        
+        $data = $this->parse_input($this->load_data($this->day, $this->ex)); $this->data = $data;
+
         $part1 = 0;
         $part2 = 0;
 
@@ -89,14 +91,14 @@ class Day11 extends Day
         $ey = []; // Empty columns
         $galaxies = []; // Galaxy coordinates
         for ($i = 0; $i < count($data[0]); $i++) {
-            $col = [];
+            $col = '';
             for ($j = 0; $j < count($data); $j++) {
-                $col[] = $data[$j][$i];
+                $col .= $data[$j][$i];
                 if ($data[$j][$i] == '#') {
                     $galaxies[] = [$j, $i];
                 }
             }
-            if (!in_array('#', $col)) {
+            if (!preg_match('/#/', $col)) {
                 $ey[] = $i;
             }
         }

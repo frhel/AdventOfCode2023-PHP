@@ -2,6 +2,8 @@
 // ----------------------------------------------------------------------------
 // Problem description: https://adventofcode.com/2023/day/
 // Solution by: https://github.com/frhel (Fry)
+// Part1: 
+// Part2: 
 // ----------------------------------------------------------------------------
 declare(strict_types=1);
 
@@ -25,7 +27,8 @@ class Day_Template extends Day
      * @param array $data The data to solve
      * @return array The solution to the problem in the form of [part1, part2]
      */
-    public function solve($data) {
+    public function solve($data) {        
+        $data = $this->parse_input($this->load_data($this->day, $this->ex)); $this->data = $data;
         $part1 = 0;
         $part2 = 0;
         

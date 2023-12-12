@@ -8,14 +8,19 @@ use frhel\adventofcode2023php\Tools\Prenta;
 use frhel\adventofcode2023php\Tools\Utils;
 
 class Day
-{
+{   
+    public $ex;
     public array $data;
     function __construct(private int $day, $bench = 0, $ex = 0) {
         // $ex = 1; // comment out to run the full data
-        $data = $this->load_data($day, $ex);
+        $this->ex = $ex;
+        $this->day = $day;
+        $data = $this->parse_input($this->load_data($day, $ex)); $this->data = $data;
         $this->data = $data;
         if ($bench < 0) return; // Don't run the actual solution if we're benchmarking
+        
 
+        Prenta::print("Solving day nr. $day");
         $overallTimer = new Timer();
         // Solve both parts at the same time. See solve() docblock for more info
         $solution = $this->solve($data);        
@@ -52,7 +57,6 @@ class Day
         // The test data is so small we may as well just load both files in anyways
         $data_full = file_get_contents(__DIR__ . '/../../data/day_' . $day);
         $data_example = file_get_contents(__DIR__ . '/../../data/day_' . $day . '.ex');
-
-        return $this->parse_input($ex === 1 ? $data_example : $data_full);
+        return $ex === 1 ? $data_example : $data_full;
     }
 }
