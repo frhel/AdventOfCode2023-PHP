@@ -18,9 +18,10 @@ class Utils {
             $day->solve($data);
             $timer->checkpoint();
         }
+        
+        Prenta::time($timer->stop(), 'Total time of ' . $times . ' runs');
         Prenta::time($timer->avg_time(), 'Average time of ' . $times . ' runs');
         Prenta::time($timer->median_time(), 'Median time of ' . $times . ' runs');
-        Prenta::time($timer->stop(), 'Total time of ' . $times . ' runs');
     }
     /**
      * Calculates the Least Common Multiple of all the numbers in the array
