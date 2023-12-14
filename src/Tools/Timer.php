@@ -21,10 +21,10 @@ class Timer {
         $this->checkpoints = [];
     }
     public function start() {
-        $this->startTime = microtime(true);
+        $this->startTime = microtime();
     }
     public function stop() {
-        $this->endTime = microtime(true);
+        $this->endTime = microtime();
         return $this->getElapsedTime();
     }
     
@@ -33,7 +33,7 @@ class Timer {
         return $this->startTime;
     }
     public function getElapsedTime() {
-        return $this->formatTime($this->endTime - $this->startTime);
+        return $this->formatTime($this->startTime, $this->endTime);
     }
     public function getStopTime() {
         return $this->endTime;
@@ -42,9 +42,9 @@ class Timer {
 
     public function checkpoint(String $name = null) {
         if ($name) {
-            $this->checkpoints[$name] = microtime(true);
+            $this->checkpoints[$name] = microtime();
         } else {
-            $this->checkpoints[] = microtime(true);
+            $this->checkpoints[] = microtime();
         }        
     }
     public function getCheckpoints() {
@@ -57,30 +57,71 @@ class Timer {
         return $this->checkpoints[$index];
     }
     public function avg_time() {
-        $total = array_sum($this->calc_elapsed_times($this->checkpoints));
-        return $this->formatTime($total / count($this->checkpoints));
+        $total = $this->calc_elapsed_times($this->checkpoints);
+        $total_avg = 0;
+        foreach ($total as $t) {
+            [$micro, $sec] = explode(' ', $t);
+            $total_avg += $micro + $sec;
+        }
+        $total_avg = $total_avg / count($total);
+        [$sec, $micro] = explode('.', $total_avg);
+        $micro = '0.'.$micro;
+        $total_avg = $micro.' '.$sec;        
+        return $this->formatTime($total_avg);
     }
 
     public function median_time() {
         $times = $this->calc_elapsed_times($this->checkpoints);
         return $this->formatTime($times[~~(count($times)) / 2]);
-
     }
 
     private function calc_elapsed_times($arr) {
         $values = [];
         $last = $this->startTime;
-        foreach ($this->checkpoints as $checkpoint) {
-            $values[] = $checkpoint - $last;
-            $last = $checkpoint;
+        foreach ($this->checkpoints as $c) {
+            [$sec, $micro] = explode('.', $this->format_micro($last, $c));
+            $micro = '0.'.$micro;
+            $values[] = $micro.' '.$sec;
+            $last = $c;
         }
         return $values;
     }
 
-
-    public function formatTime(String $time) {
-        $time = DateTime::createFromFormat('U.u', number_format($time, 4, '.', ''));
-        $time = (float) $time->format('s.u');
-        return $time . 's';
+    public function formatTime(String $start, String $end = null) {
+        $time = (float) $this->format_micro($start, $end);
+        if ($time < 0.001) {
+            $time = $this->formatMicroseconds($time);
+        } else if ($time < 1) {
+            $time = $this->formatMilliseconds($time);
+        } else {
+            $time = $this->formatSeconds($time);
+        }
+        return $time;
     }
+    
+    public function format_micro($start, $end = null) {
+        $start = number_format(array_sum(explode(' ', $start)), 8, '.', '');
+        if ($end !== null) {
+            $end = number_format(array_sum(explode(' ', $end)), 8, '.', '');
+            $start = $end - $start;
+        }
+        return $start;
+    }
+
+    public function formatMilliseconds(String $time) {
+        $time = $time * 1000;
+        $time = number_format($time, 2, '.', '');
+        return $time. 'ms';
+    }
+
+    public function formatMicroseconds(String $time) {
+        $time = $time * 1000000;
+        $time = number_format($time, 0, '.', '');
+        return $time. 'µs';
+    }
+
+    public function formatSeconds(String $time) {
+        $time = number_format($time, 2, '.', '');
+        return $time. 's';
+    }   
 }
