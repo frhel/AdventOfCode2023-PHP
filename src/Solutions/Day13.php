@@ -16,7 +16,7 @@ use frhel\adventofcode2023php\Tools\Utils;
 class Day13 extends Day
 {
     function __construct(private int $day, $bench = 0, $ex = 0) {
-        // $ex = 1;
+        $ex = 1;
         parent::__construct($day, $bench, $ex);
     }
 
@@ -63,29 +63,14 @@ class Day13 extends Day
         // }
         // return [$part1, $part2];
 
-        $found = 0;
-        $count = 0;
-        $pattern_no = 0;
         foreach ($patterns as $pattern) {
             $rows = $pattern['rows'];
             $cols = $pattern['cols'];
 
-            $idx = $this->find_mirror_pattern($rows);
-            $part1 = $idx > 0 ? $part1 + $idx * 100 : $part1;
-            if ($idx === 0) {
-                $idx = $this->find_mirror_pattern($cols);
-                $part1 = $idx > 0 ? $part1 + $idx : $part1;
-            }
-
-            echo '// Part2 //'.PHP_EOL;
-            $idx = $this->find_mirror_pattern($rows, true);
-            $part2 = $idx > 0 ? $part2 + $idx * 100 : $part2;
-            if ($idx === 0) {
-                $idx = $this->find_mirror_pattern($cols, true);
-                $part2 = $idx > 0 ? $part2 + $idx : $part2;
-            }
-
-            echo '-------------------------------'.PHP_EOL;
+            [$p1r, $p2r] = $this->find_mirror_pattern($rows);
+            [$p1c, $p2c] = $this->find_mirror_pattern($cols);
+            $part1 += $p1r > 0 ? $p1r * 100 : $p1c;
+            $part2 += $p2r > 0 ? $p2r * 100 : $p2c;
         }
 
         return [$part1, $part2];
@@ -93,31 +78,36 @@ class Day13 extends Day
 
     protected function find_mirror_pattern($lines, $smudge = false) {
         $potential = $this->potential_mirrors($lines, $smudge);
-        $part1 = 0;
-        $part2 = 0;
 
+        [$part1, $part2] = [0, -1];
         foreach ($potential as $idx) {
-            $count = 0;
-            $offset = $idx - 1;
-            $diff = $smudge;
-            while ($offset - $count >= 0 && $idx + $count < count($lines)) {
-                [$l1, $l2] = [$lines[$offset - $count], $lines[$idx + $count]];
+            $part1 = $part1 < 1 ? 0 : $part1;
+            $part2 = $part2 < 1 ? -1 : $part2;
+            $offset = 0;
+            while ($idx - $offset - 1 >= 0 && $idx + $offset < count($lines)) {
+                [$l1, $l2] = [$lines[$idx - $offset - 1], $lines[$idx + $offset]];
                 if ($l1 === $l2) {
-                    $count++;
-                    continue;
-                } else if ($diff === true && $this->find_smudge($l1, $l2)) {
-                    $diff = false;
-                    $count++;
-                    continue;
+                    $offset++;
+                } else if ($this->find_smudge($l1, $l2) && $part2 === (-1)) {
+                    $offset++;
+                    $part2 = 0;
+                    $part1 = -1;
+                } else if ($l1 !== $l2 && $part2 === 0) {
+                    $part2 = -1;
+                    $part1 = -1;
+                    $offset = 0;
+                    break;
                 }
 
-                if ($l1 !== $l2) continue 2;
             }
-
-            if ($count > 0) return $idx;
+            if ($offset > 0) {
+                if ($part1 < 1) $part1 = $part1 === 0 ? $idx : 0;
+                if ($part2 < 1) $part2 = $part2 === 0 ? $idx : 0;
+                if ($part1 > 0 && $part2 > 0) return [$part1, $part2];
+            }
         }
-
-        return 0;
+        echo 'Part 1 '. $part1 .', Part2 '. $part2 .''.PHP_EOL;
+        return [$part1, $part2];
     }
 
     protected function potential_mirrors($lines, $smudge = false) {
