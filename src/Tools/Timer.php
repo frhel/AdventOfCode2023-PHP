@@ -72,7 +72,7 @@ class Timer {
 
     public function median_time() {
         $times = $this->calc_elapsed_times($this->checkpoints);
-        return $this->formatTime($times[~~(count($times)) / 2]);
+        return $this->formatTime($times[floor((count($times)) / 2)]);
     }
 
     private function calc_elapsed_times($arr) {

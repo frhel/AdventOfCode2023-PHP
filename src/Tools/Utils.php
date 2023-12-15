@@ -9,19 +9,33 @@ class Utils {
     
     static public function bench($day, $data, $times) {
         if ($times === 0) return;
-        Prenta::print('Running benchmark. ' . $times . ' rounds', 'yellow');
+
+        Prenta::std(        'Running benchmark       ' . $times . ' rounds', 'white', 'purple');
+        echo PHP_EOL;
+
         $day_path = '\\frhel\\adventofcode2023php\\Solutions\\Day' . $day;
         $day = new $day_path($day, -1); // true to stop after loading data
+        $memory = [];
         $timer = new Timer();
         $timer->start();
-        for ($i = 1; $i <= $times; $i++) {
+        for ($i = 1; $i <= $times; $i++) {            
+            memory_reset_peak_usage();
             $day->solve($data);
             $timer->checkpoint();
+            $memory[] = memory_get_peak_usage();
         }
+        $avg_mem = round((array_sum($memory) / count($memory))/pow(2, 20), 2);
+        $peak_mem = round(max($memory)/pow(2, 20), 2);
+        $left_pad = str_repeat(' ', strlen((string)$times));
         
-        Prenta::time($timer->stop(), 'Total time of ' . $times . ' runs');
-        Prenta::time($timer->avg_time(), 'Average time of ' . $times . ' runs');
-        Prenta::time($timer->median_time(), 'Median time of ' . $times . ' runs');
+        Prenta::label('          Total time', '' . $timer->stop(), 'cyan');
+        Prenta::label('        Average time', '' . $timer->avg_time(), 'cyan');
+        Prenta::label('         Median time', '' . $timer->median_time(), 'cyan');
+        Prenta::label('Average memory usage', $avg_mem . ' MiB', 'green');
+        Prenta::label('         Peak Memory', $peak_mem . " MiB", 'green');
+        echo PHP_EOL;
+        Prenta::std($left_pad."                               ", 'normal', 'purple');
+        echo PHP_EOL;
     }
     /**
      * Calculates the Least Common Multiple of all the numbers in the array
