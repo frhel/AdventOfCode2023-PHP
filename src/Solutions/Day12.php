@@ -2,8 +2,8 @@
 // ----------------------------------------------------------------------------
 // Problem description: https://adventofcode.com/2023/day/12
 // Solution by: https://github.com/frhel (Fry)
-// Part1: 
-// Part2: 
+// Part1: 7402
+// Part2: 3384337640277
 // ----------------------------------------------------------------------------
 declare(strict_types=1);
 
@@ -15,7 +15,7 @@ use frhel\adventofcode2023php\Tools\Utils;
 
 class Day12 extends Day 
 {
-    function __construct(private int $day, $bench = 0, $ex = 0) {
+    function __construct(private int $day, $bench = 3, $ex = 0) {
         // $ex = 1;
         parent::__construct($day, $bench, $ex);
     }
