@@ -36,7 +36,7 @@ class Day15 extends Day
 
         $part2 = $this->calc_lens_power($data);
 
-        // return ['Redacted', 'Redacted'];
+        return ['Redacted', 'Redacted'];
         return [$part1, $part2];
     }
 

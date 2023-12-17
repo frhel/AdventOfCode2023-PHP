@@ -6,7 +6,7 @@ use frhel\adventofcode2023php\Tools\Timer;
 use frhel\adventofcode2023php\Tools\Prenta;
 
 class Utils {
-    
+
     static public function bench($day, $data, $times) {
         if ($times === 0) return;
 
@@ -18,7 +18,7 @@ class Utils {
         $memory = [];
         $timer = new Timer();
         $timer->start();
-        for ($i = 1; $i <= $times; $i++) {            
+        for ($i = 1; $i <= $times; $i++) {
             memory_reset_peak_usage();
             $day->solve($data);
             $timer->checkpoint();
@@ -27,7 +27,7 @@ class Utils {
         $avg_mem = round((array_sum($memory) / count($memory))/pow(2, 20), 2);
         $peak_mem = round(max($memory)/pow(2, 20), 2);
         $left_pad = str_repeat(' ', strlen((string)$times));
-        
+
         Prenta::label('          Total time', '' . $timer->stop(), 'cyan');
         Prenta::label('        Average time', '' . $timer->avg_time(), 'cyan');
         Prenta::label('         Median time', '' . $timer->median_time(), 'cyan');
@@ -37,10 +37,28 @@ class Utils {
         Prenta::std($left_pad."                               ", 'normal', 'purple');
         echo PHP_EOL;
     }
+
+    static public function print_grid($grid) {
+        $left_pad = str_repeat(' ', strlen((string)count($grid)));
+        echo $left_pad.implode('', range(0, count($grid)-1)).PHP_EOL;
+        foreach ($grid as $row_c => $row) {
+            $left_pad = str_repeat(' ', strlen((string)count($grid)) - strlen((string)$row_c));
+            echo $left_pad.$row_c;
+            if (is_string($row)) {
+                echo $row . PHP_EOL;
+            } else {
+                echo implode('', $row) . PHP_EOL;
+            }
+        }
+        $left_pad = str_repeat(' ', strlen((string)count($grid)));
+        echo $left_pad.implode('', range(0, count($grid)-1)).PHP_EOL;
+        echo PHP_EOL;
+    }
+
     /**
      * Calculates the Least Common Multiple of all the numbers in the array
      * @depends gcd
-     * 
+     *
      * @param array $arr The array of numbers
      * @return int The Least Common Multiple of all the numbers in the array
      */
@@ -52,7 +70,7 @@ class Utils {
 
     /**
      * Calculates the Greatest Common Divisor of two numbers
-     * 
+     *
      * @param int $a First number
      * @param int $b Second number
      * @return int The Greatest Common Divisor of the two numbers
@@ -60,7 +78,7 @@ class Utils {
     public function gcd($a, $b) {
         // Make sure $a is the smaller number
         [$a, $b] = $a > $b ? [$b, $a] : [$a, $b];
-        
+
         // Literally just loop over all the numbers from 2 to $b and check if they divide into both $a and $b
         for ($gcd = 2; $gcd <= $b; $gcd++) {
             if ($a % $gcd === 0 && $b % $gcd === 0) return $gcd;
