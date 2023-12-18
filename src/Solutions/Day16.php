@@ -28,7 +28,7 @@ class Day16 extends Day
     private $fs_map;
     private $bs_map;
 
-    function __construct(private int $day, $bench = 25, $ex = 0) {
+    function __construct(private int $day, $bench = 0, $ex = 0) {
 
         // $ex = 1;
         $this->stack = [];
